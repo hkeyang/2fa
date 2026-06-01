@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="纯前端、离线运行的 2FA / TOTP 动态验证码生成器，支持多密钥、实时刷新、一键复制。" />
+  <title>2FA 验证码生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 背景装饰：极简网格 -->
+  <div class="bg-decor" aria-hidden="true">
+    <span class="bg-grid"></span>
+  </div>
+
+  <div class="app">
+    <!-- 顶部导航 -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke-width="2.6" stroke-linecap="round">
+            <line x1="12" y1="12" x2="12" y2="3"   stroke="#4285F4"></line>
+            <line x1="12" y1="12" x2="18.4" y2="5.6" stroke="#EA4335"></line>
+            <line x1="12" y1="12" x2="21" y2="12"  stroke="#FBBC05"></line>
+            <line x1="12" y1="12" x2="18.4" y2="18.4" stroke="#34A853"></line>
+            <line x1="12" y1="12" x2="12" y2="21"  stroke="#4285F4"></line>
+            <line x1="12" y1="12" x2="5.6" y2="18.4" stroke="#EA4335"></line>
+            <line x1="12" y1="12" x2="3" y2="12"   stroke="#FBBC05"></line>
+            <line x1="12" y1="12" x2="5.6" y2="5.6" stroke="#34A853"></line>
+          </svg>
+        </span>
+        <span class="brand__text">
+          <span class="brand__name">Authenticator</span>
+          <span class="brand__tag">2FA 动态验证码</span>
+        </span>
+      </div>
+      <div class="topbar__actions">
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="切换主题" title="切换深色 / 浅色">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- 左侧：输入区 -->
+      <section class="panel panel--input" aria-label="密钥输入">
+        <div class="panel__head">
+          <span class="eyebrow">SECRET KEY</span>
+          <h1 class="panel__title">输入 2FA 密钥</h1>
+          <p class="panel__subtitle">支持 Base32 格式，每行一个密钥，输入即实时生成。</p>
+        </div>
+
+        <form id="keyForm" class="key-form" autocomplete="off">
+          <div class="field">
+            <label for="keyInput" class="field__label">密钥（每行一个）</label>
+            <textarea
+              id="keyInput"
+              class="field__textarea"
+              rows="5"
+              spellcheck="false"
+              placeholder="例如：JBSWY3DPEHPK3PXP&#10;也可粘贴 otpauth:// 链接"></textarea>
+          </div>
+
+          <!-- 高级参数 -->
+          <details class="advanced">
+            <summary class="advanced__summary">高级参数</summary>
+            <div class="advanced__grid">
+              <label class="mini-field">
+                <span>位数</span>
+                <select id="digitsSelect">
+                  <option value="6" selected>6 位</option>
+                  <option value="7">7 位</option>
+                  <option value="8">8 位</option>
+                </select>
+              </label>
+              <label class="mini-field">
+                <span>周期（秒）</span>
+                <select id="periodSelect">
+                  <option value="30" selected>30</option>
+                  <option value="60">60</option>
+                </select>
+              </label>
+              <label class="mini-field">
+                <span>算法</span>
+                <select id="algoSelect">
+                  <option value="SHA-1" selected>SHA-1</option>
+                  <option value="SHA-256">SHA-256</option>
+                  <option value="SHA-512">SHA-512</option>
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <div class="key-form__actions">
+            <label class="checkbox">
+              <input type="checkbox" id="rememberToggle" />
+              <span>在本机记住密钥</span>
+            </label>
+            <button type="button" id="clearBtn" class="btn btn--ghost">清空</button>
+          </div>
+        </form>
+
+        <div class="notice">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>全程在浏览器本地计算，密钥不会上传到任何服务器。可断网使用。</span>
+        </div>
+      </section>
+
+      <!-- 右侧：结果区 -->
+      <section class="panel panel--output" aria-label="验证码结果">
+        <div class="panel__head panel__head--row">
+          <div>
+            <span class="eyebrow">LIVE CODES</span>
+            <h2 class="panel__title">动态验证码</h2>
+          </div>
+          <div class="countdown" id="countdown" title="距离下次刷新">
+            <svg class="countdown__ring" viewBox="0 0 40 40" width="48" height="48">
+              <circle class="countdown__track" cx="20" cy="20" r="16"></circle>
+              <circle class="countdown__progress" id="countdownProgress" cx="20" cy="20" r="16"></circle>
+            </svg>
+            <span class="countdown__num" id="countdownNum">30</span>
+          </div>
+        </div>
+
+        <ul id="codeList" class="code-list" aria-live="polite"></ul>
+
+        <div id="emptyState" class="empty-state">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <p>在左侧输入密钥后，这里会实时显示验证码。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 复制成功提示 -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/totp.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

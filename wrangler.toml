@@ -1,0 +1,8 @@
+name = "2fa"
+compatibility_date = "2026-06-01"
+
+assets = { directory = "public" }
+
+routes = [
+  { pattern = "2fa.aisea.space", custom_domain = true }
+]

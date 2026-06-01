@@ -18,13 +18,15 @@
 
 ```
 2FA/
-├── index.html        # 页面结构
-├── styles.css        # 设计系统 + 样式（CSS 变量驱动，双主题）
-├── js/
-│   ├── totp.js       # 核心算法：Base32 解码 / HOTP / TOTP / otpauth 解析
-│   └── app.js        # 界面交互与状态管理
+├── public/
+│   ├── index.html    # 页面结构
+│   ├── styles.css    # 设计系统 + 样式（CSS 变量驱动，双主题）
+│   └── js/
+│       ├── totp.js   # 核心算法：Base32 解码 / HOTP / TOTP / otpauth 解析
+│       └── app.js    # 界面交互与状态管理
 ├── test/
 │   └── verify.mjs    # RFC 6238 标准测试向量校验
+├── wrangler.toml     # Cloudflare Workers 静态资源部署配置
 └── README.md
 ```
 
@@ -36,13 +38,22 @@
 
 ```bash
 # Python 3
-python3 -m http.server 8080
+python3 -m http.server 8080 --directory public
 
 # 或 Node（需先安装 serve）
-npx serve .
+npx serve public
 ```
 
 然后浏览器打开 `http://localhost:8080`。
+
+## 部署
+
+已配置为 Cloudflare Workers 静态资源部署，域名为 `2fa.aisea.space`：
+
+```bash
+npm install
+npm run deploy
+```
 
 ## 算法验证
 

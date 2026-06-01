@@ -1,0 +1,12 @@
+{
+  "name": "2fa",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "test": "node test/verify.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.95.0"
+  }
+}
