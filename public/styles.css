@@ -1,7 +1,7 @@
 /* =========================================================
    2FA 验证码生成器 — 样式表 v2
-   设计风格：玻璃拟态 + 流动渐变 + 现代精致排版
-   以 CSS 变量驱动，支持深 / 浅双主题
+   设计风格：清爽浅色 + 现代精致排版
+   以 CSS 变量驱动，默认浅色主题
    ========================================================= */
 
 /* ---------- 设计令牌（Design Tokens） ---------- */
@@ -51,34 +51,6 @@
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
 
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ---------- 深色主题 ---------- */
-:root[data-theme='dark'] {
-  --brand: #6f9bef;
-  --brand-strong: #5b8ae8;
-  --brand-soft: rgba(111, 155, 239, 0.14);
-
-  --bg: #0f1117;
-  --bg-2: #161922;
-  --text: #eceef4;
-  --text-muted: #9aa2b3;
-  --text-faint: #626a7d;
-
-  --glass-bg: #181b24;
-  --glass-border: #272b38;
-  --glass-inner: #1f2330;
-  --field-bg: #1f2330;
-
-  --success: #3fbd85;
-  --danger: #e8635a;
-  --warning: #e7a64c;
-
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 34px rgba(0, 0, 0, 0.45);
-  --shadow-glow: none;
-
-  --grid-line: rgba(255, 255, 255, 0.03);
 }
 
 /* ---------- 基础重置 ---------- */
@@ -217,6 +189,33 @@ body.token-mode .panel--output {
 
 body.token-mode .layout {
   grid-template-columns: 1fr;
+  align-items: stretch;
+  min-height: 0;
+  padding-bottom: clamp(18px, 3vh, 36px);
+}
+
+body.token-mode {
+  line-height: 1.4;
+}
+
+body.token-mode .app {
+  max-width: 1280px;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body.token-mode .topbar {
+  padding: clamp(14px, 2.2vh, 24px) 0 clamp(16px, 2.5vh, 28px);
+}
+
+body.token-mode .brand__logo {
+  width: 38px;
+  height: 38px;
+}
+
+body.token-mode .brand__logo svg {
+  width: 23px;
+  height: 23px;
 }
 
 .token-panel {
@@ -238,6 +237,31 @@ body.token-mode .layout {
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   box-shadow: var(--shadow-md);
+}
+
+body.token-mode .token-panel {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(18px, 2.7vh, 30px);
+}
+
+body.token-mode .token-hero {
+  align-items: center;
+  min-height: clamp(136px, 18vh, 180px);
+  padding: clamp(22px, 3.4vh, 36px);
+}
+
+body.token-mode .token-hero .eyebrow {
+  margin-bottom: 6px;
+}
+
+body.token-mode .token-hero .panel__title {
+  font-size: 22px;
+}
+
+body.token-mode .token-hero .panel__subtitle {
+  margin-top: 6px;
 }
 
 .token-expire {
@@ -282,6 +306,13 @@ body.token-mode .layout {
   gap: var(--space-5);
 }
 
+body.token-mode .verify-grid {
+  min-height: 0;
+  height: 100%;
+  align-items: stretch;
+  gap: clamp(20px, 1.8vw, 28px);
+}
+
 .verify-card {
   min-height: 280px;
   background: var(--glass-bg);
@@ -293,6 +324,26 @@ body.token-mode .layout {
   flex-direction: column;
   gap: var(--space-4);
   overflow: hidden;
+}
+
+body.token-mode .verify-card {
+  height: 100%;
+  min-height: 0;
+  padding: clamp(18px, 2.5vh, 28px);
+  gap: clamp(14px, 1.9vh, 22px);
+}
+
+body.token-mode .verify-card--sms {
+  grid-column: span 1;
+}
+
+body.token-mode .verify-card__head strong {
+  font-size: 16px;
+}
+
+body.token-mode .eyebrow {
+  font-size: 10px;
+  margin-bottom: 6px;
 }
 
 .verify-card__head {
@@ -323,6 +374,11 @@ body.token-mode .layout {
   padding: var(--space-4);
 }
 
+body.token-mode .totp-display {
+  min-height: clamp(76px, 10vh, 112px);
+  padding: var(--space-4);
+}
+
 .totp-display span {
   font-family: var(--font-mono);
   font-size: 38px;
@@ -331,8 +387,16 @@ body.token-mode .layout {
   letter-spacing: 0;
 }
 
+body.token-mode .totp-display span {
+  font-size: 32px;
+}
+
 .mail-code span {
   font-size: 24px;
+}
+
+body.token-mode .mail-code span {
+  font-size: 22px;
 }
 
 .verify-card__foot {
@@ -349,6 +413,11 @@ body.token-mode .layout {
   font-size: 13px;
 }
 
+body.token-mode .verify-message {
+  min-height: 18px;
+  font-size: 12px;
+}
+
 .mail-address {
   min-height: 26px;
   color: var(--text-muted);
@@ -356,59 +425,6 @@ body.token-mode .layout {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.sms-frame {
-  flex: 1;
-  min-height: 300px;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--bg-2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.sms-frame__chrome {
-  height: 28px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 var(--space-3);
-  border-bottom: 1px solid var(--glass-border);
-  background: var(--glass-inner);
-}
-
-.sms-frame__chrome span {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--text-faint);
-  opacity: 0.45;
-}
-
-.sms-frame__viewport {
-  height: calc(100% - 28px);
-  min-height: 272px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.sms-frame iframe {
-  width: 142%;
-  height: 142%;
-  border: 0;
-  background: #fff;
-  transform: scale(0.704);
-  transform-origin: 0 0;
-}
-
-.verify-open {
-  flex: 0 0 auto;
-  width: max-content;
-  min-height: 32px;
-  padding: 6px var(--space-3);
-  font-size: 12px;
-  text-decoration: none;
 }
 
 .verify-card--sms {
@@ -585,33 +601,46 @@ body.token-mode .layout {
   border-color: var(--brand);
 }
 
-.icon-btn {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
+.btn--primary {
+  gap: 7px;
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 8px 18px rgba(59, 111, 212, 0.18);
+}
+
+.btn--primary:hover {
+  background: var(--brand-strong);
+  border-color: var(--brand-strong);
+  transform: translateY(-1px);
+}
+
+.btn--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  height: 36px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--glass-border);
   background: var(--glass-inner);
   color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
   transition: background var(--transition), color var(--transition),
     transform var(--transition);
 }
 
-.icon-btn:hover {
+.lang-toggle:hover {
   color: var(--text);
   transform: translateY(-1px);
-}
-
-/* 主题图标显隐 */
-.icon-moon {
-  display: none;
-}
-:root[data-theme='dark'] .icon-sun {
-  display: none;
-}
-:root[data-theme='dark'] .icon-moon {
-  display: block;
 }
 
 /* ---------- 安全提示条 ---------- */
@@ -874,25 +903,11 @@ body.token-mode .layout {
   .btn--ghost[href] {
     display: none;
   }
-  .verify-open[href] {
-    display: inline-flex;
-  }
   .panel__title {
     font-size: 20px;
   }
   .verify-card {
     padding: var(--space-4);
-  }
-  .sms-frame {
-    min-height: 270px;
-  }
-  .sms-frame__viewport {
-    min-height: 242px;
-  }
-  .sms-frame iframe {
-    width: 150%;
-    height: 150%;
-    transform: scale(0.667);
   }
 }
 

@@ -35,13 +35,12 @@
         </span>
         <span class="brand__text">
           <span class="brand__name">Authenticator</span>
-          <span class="brand__tag">2FA 动态验证码</span>
+          <span class="brand__tag" data-i18n="brandTag">2FA 动态验证码</span>
         </span>
       </div>
       <div class="topbar__actions">
-        <button id="themeToggle" class="icon-btn" type="button" aria-label="切换主题" title="切换深色 / 浅色">
-          <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <button id="languageToggle" class="lang-toggle" type="button" aria-label="Switch language" title="Switch language">
+          EN
         </button>
       </div>
     </header>
@@ -51,27 +50,28 @@
       <section class="panel panel--input" aria-label="密钥输入">
         <div class="panel__head">
           <span class="eyebrow">SECRET KEY</span>
-          <h1 class="panel__title">输入 2FA 密钥</h1>
-          <p class="panel__subtitle">支持 Base32 格式，每行一个密钥，输入即实时生成。</p>
+          <h1 class="panel__title" data-i18n="inputTitle">输入 2FA 密钥</h1>
+          <p class="panel__subtitle" data-i18n="inputSubtitle">支持 Base32 格式，每行一个密钥，输入即实时生成。</p>
         </div>
 
         <form id="keyForm" class="key-form" autocomplete="off">
           <div class="field">
-            <label for="keyInput" class="field__label">密钥（每行一个）</label>
+            <label for="keyInput" class="field__label" data-i18n="secretLabel">密钥（每行一个）</label>
             <textarea
               id="keyInput"
               class="field__textarea"
               rows="5"
               spellcheck="false"
+              data-i18n-placeholder="secretPlaceholder"
               placeholder="例如：JBSWY3DPEHPK3PXP&#10;也可粘贴 otpauth:// 链接"></textarea>
           </div>
 
           <!-- 高级参数 -->
           <details class="advanced">
-            <summary class="advanced__summary">高级参数</summary>
+            <summary class="advanced__summary" data-i18n="advanced">高级参数</summary>
             <div class="advanced__grid">
               <label class="mini-field">
-                <span>位数</span>
+                <span data-i18n="digits">位数</span>
                 <select id="digitsSelect">
                   <option value="6" selected>6 位</option>
                   <option value="7">7 位</option>
@@ -79,14 +79,14 @@
                 </select>
               </label>
               <label class="mini-field">
-                <span>周期（秒）</span>
+                <span data-i18n="period">周期（秒）</span>
                 <select id="periodSelect">
                   <option value="30" selected>30</option>
                   <option value="60">60</option>
                 </select>
               </label>
               <label class="mini-field">
-                <span>算法</span>
+                <span data-i18n="algorithm">算法</span>
                 <select id="algoSelect">
                   <option value="SHA-1" selected>SHA-1</option>
                   <option value="SHA-256">SHA-256</option>
@@ -99,15 +99,15 @@
           <div class="key-form__actions">
             <label class="checkbox">
               <input type="checkbox" id="rememberToggle" />
-              <span>在本机记住密钥</span>
+              <span data-i18n="remember">在本机记住密钥</span>
             </label>
-            <button type="button" id="clearBtn" class="btn btn--ghost">清空</button>
+            <button type="button" id="clearBtn" class="btn btn--ghost" data-i18n="clear">清空</button>
           </div>
         </form>
 
         <div class="notice">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>全程在浏览器本地计算，密钥不会上传到任何服务器。可断网使用。</span>
+          <span data-i18n="privacyNotice">全程在浏览器本地计算，密钥不会上传到任何服务器。可断网使用。</span>
         </div>
       </section>
 
@@ -116,7 +116,7 @@
         <div class="panel__head panel__head--row">
           <div>
             <span class="eyebrow">LIVE CODES</span>
-            <h2 class="panel__title">动态验证码</h2>
+            <h2 class="panel__title" data-i18n="codesTitle">动态验证码</h2>
           </div>
           <div class="countdown" id="countdown" title="距离下次刷新">
             <svg class="countdown__ring" viewBox="0 0 40 40" width="48" height="48">
@@ -131,7 +131,7 @@
 
         <div id="emptyState" class="empty-state">
           <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <p>在左侧输入密钥后，这里会实时显示验证码。</p>
+          <p data-i18n="emptyState">在左侧输入密钥后，这里会实时显示验证码。</p>
         </div>
       </section>
 
@@ -151,48 +151,39 @@
           <article class="verify-card">
             <div class="verify-card__head">
               <span class="eyebrow">GOOGLE AUTH</span>
-              <strong>Google 验证器</strong>
+              <strong data-i18n="googleAuthTitle">Google 验证器</strong>
             </div>
             <button id="tokenTotpCopy" class="totp-display" type="button" title="点击复制当前验证码">
               <span id="tokenTotpCode">------</span>
             </button>
             <div class="verify-card__foot">
-              <span id="tokenTotpCountdown">本地 30 秒刷新</span>
+              <span id="tokenTotpCountdown" data-i18n="localRefresh">本地 30 秒刷新</span>
             </div>
             <p id="tokenTotpMessage" class="verify-message"></p>
           </article>
 
           <article class="verify-card verify-card--sms">
-            <div class="verify-card__top">
-              <div class="verify-card__head">
-                <span class="eyebrow">PHONE SMS</span>
-                <strong>手机验证码</strong>
-              </div>
-              <a id="tokenSmsOpen" class="btn btn--ghost verify-open" href="#" target="_blank" rel="noreferrer" hidden>外部打开</a>
+            <div class="verify-card__head">
+              <span class="eyebrow">PHONE SMS</span>
+              <strong data-i18n="smsTitle">手机验证码</strong>
             </div>
-            <p id="tokenSmsMessage" class="verify-message">正在准备接码窗口...</p>
-            <div id="tokenSmsFrameWrap" class="sms-frame" hidden>
-              <div class="sms-frame__chrome" aria-hidden="true">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-              <div class="sms-frame__viewport">
-                <iframe id="tokenSmsFrame" title="手机验证码接码页面"></iframe>
-              </div>
-            </div>
+            <span id="tokenSmsPhone" class="mail-address"></span>
+            <button id="tokenSmsOpen" class="totp-display sms-code" type="button">
+              <span id="tokenSmsCode" data-i18n="viewSms">查看短信</span>
+            </button>
+            <p id="tokenSmsMessage" class="verify-message" data-i18n="smsHint">点击后由后台读取最新短信并提取验证码。</p>
           </article>
 
           <article class="verify-card">
             <div class="verify-card__head">
-              <span class="eyebrow">HOTMAIL</span>
-              <strong>Hotmail 邮箱验证码</strong>
+              <span class="eyebrow">MAIL CODE</span>
+              <strong data-i18n="mailTitle">恢复邮箱验证码</strong>
             </div>
             <span id="tokenMailEmail" class="mail-address"></span>
             <button id="tokenMailRefresh" class="totp-display mail-code" type="button">
-              <span id="tokenMailCode">读取邮件</span>
+              <span id="tokenMailCode" data-i18n="readMail">读取邮件</span>
             </button>
-            <p id="tokenMailMessage" class="verify-message">点击后由后台读取最新邮件并提取验证码。</p>
+            <p id="tokenMailMessage" class="verify-message" data-i18n="mailHint">点击读取最新恢复邮件验证码。</p>
           </article>
         </div>
       </section>

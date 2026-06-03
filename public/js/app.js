@@ -5,16 +5,156 @@
  *  - 读取用户输入（多行密钥 / otpauth 链接）
  *  - 调用 TOTP 模块实时生成验证码
  *  - 渲染结果卡片、倒计时进度环
- *  - 复制、清空、记住密钥、主题切换
+ *  - 复制、清空、记住密钥、语言切换
  */
 (function () {
   'use strict';
 
   const STORAGE_KEY = 'totp.secrets';
   const STORAGE_REMEMBER = 'totp.remember';
-  const STORAGE_THEME = 'totp.theme';
+  const STORAGE_LANGUAGE = 'totp.language';
   const STORAGE_SETTINGS = 'totp.settings';
   const DEFAULT_API_BASE = 'https://youxi.aisea.space';
+  const DEFAULT_LANGUAGE = 'zh';
+
+  const I18N = {
+    zh: {
+      langAttr: 'zh-CN',
+      langToggle: 'EN',
+      brandTag: '2FA 动态验证码',
+      inputTitle: '输入 2FA 密钥',
+      inputSubtitle: '支持 Base32 格式，每行一个密钥，输入即实时生成。',
+      secretLabel: '密钥（每行一个）',
+      secretPlaceholder: '例如：JBSWY3DPEHPK3PXP\n也可粘贴 otpauth:// 链接',
+      advanced: '高级参数',
+      digits: '位数',
+      period: '周期（秒）',
+      algorithm: '算法',
+      remember: '在本机记住密钥',
+      clear: '清空',
+      privacyNotice: '全程在浏览器本地计算，密钥不会上传到任何服务器。可断网使用。',
+      codesTitle: '动态验证码',
+      emptyState: '在左侧输入密钥后，这里会实时显示验证码。',
+      loadingSession: '正在读取接码资料...',
+      customerPage: '客户接码页',
+      unavailableTitle: '接码链接不可用',
+      unavailableMeta: '请返回后台重新生成客户接码页链接。',
+      tokenTitleWithLabel: (label) => `接码页 · ${label}`,
+      tokenMeta: '三种验证码集中查看，无需手动输入长密钥、手机号或邮箱。',
+      googleAuthTitle: 'Google 验证器',
+      localRefresh: '本地 30 秒刷新',
+      refreshIn: (seconds) => `${seconds}s 后刷新`,
+      generatedLocal: '本地生成，点击验证码可复制。',
+      invalidTotpSecret: '谷歌验证器密钥格式不正确。',
+      totpMissing: '该产品没有配置 Google 验证器密钥。',
+      notConfigured: '未配置',
+      smsTitle: '手机验证码',
+      configuredPhone: '已配置手机接码',
+      noPhone: '未配置手机',
+      viewSms: '查看短信',
+      readSms: '读取中',
+      smsHint: '点击后由后台读取最新短信并提取验证码。',
+      smsReading: '后台正在读取最新短信...',
+      smsRead: '已读取最新短信。',
+      smsFailed: '短信验证码读取失败',
+      smsNotFound: '未找到',
+      smsRawInvalid: '手机接码内容不是可嵌入网址，请在后台检查接码字段。',
+      smsMissing: '该产品没有配置手机接码网址。',
+      mailTitle: '恢复邮箱验证码',
+      noMail: '未配置邮箱',
+      readMail: '读取邮件',
+      readMailLoading: '读取中',
+      mailHint: '点击读取最新恢复邮件验证码。',
+      mailMissing: '该产品没有配置恢复邮箱。',
+      mailReading: '后台正在读取最新恢复邮件...',
+      mailRead: '已读取最新恢复邮件。',
+      mailFailed: '恢复邮箱验证码读取失败',
+      expired: '已过期',
+      validDays: (days) => `有效 ${days} 天`,
+      validDaysHours: (days, hours) => `有效 ${days} 天 ${hours} 小时`,
+      validHoursMinutes: (hours, minutes) => `有效 ${hours} 小时 ${minutes} 分钟`,
+      validMinutes: (minutes) => `有效 ${minutes} 分钟`,
+      validLessMinute: '有效 <1 分钟',
+      keyLabel: (idx) => `密钥 ${idx + 1}`,
+      digitsMeta: (digits) => `${digits}位`,
+      copyTitle: '点击复制',
+      invalidSecret: '— 无效密钥 —',
+      copied: (text) => `已复制：${text}`,
+      copyFailed: '复制失败，请手动选择',
+      webCryptoMissing: '当前浏览器不支持 Web Crypto，无法生成验证码',
+      loadingStatus: '正在读取接码资料...',
+      sessionFailed: '接码链接读取失败',
+    },
+    en: {
+      langAttr: 'en',
+      langToggle: '中文',
+      brandTag: '2FA verification codes',
+      inputTitle: 'Enter 2FA Secret',
+      inputSubtitle: 'Supports Base32 secrets, one per line, with live code generation.',
+      secretLabel: 'Secret key (one per line)',
+      secretPlaceholder: 'Example: JBSWY3DPEHPK3PXP\nYou can also paste an otpauth:// URL',
+      advanced: 'Advanced settings',
+      digits: 'Digits',
+      period: 'Period (seconds)',
+      algorithm: 'Algorithm',
+      remember: 'Remember secrets on this device',
+      clear: 'Clear',
+      privacyNotice: 'Codes are calculated locally in your browser. Secrets are never uploaded and work offline.',
+      codesTitle: 'Live Codes',
+      emptyState: 'Enter a secret on the left and live codes will appear here.',
+      loadingSession: 'Loading verification details...',
+      customerPage: 'Customer verification page',
+      unavailableTitle: 'Verification link unavailable',
+      unavailableMeta: 'Return to the admin panel and generate a new customer verification link.',
+      tokenTitleWithLabel: (label) => `Verification page · ${label}`,
+      tokenMeta: 'View all three verification codes without manually entering long secrets, phone numbers, or email addresses.',
+      googleAuthTitle: 'Google Authenticator',
+      localRefresh: 'Refreshes locally every 30 seconds',
+      refreshIn: (seconds) => `Refreshes in ${seconds}s`,
+      generatedLocal: 'Generated locally. Click the code to copy.',
+      invalidTotpSecret: 'The Google Authenticator secret is invalid.',
+      totpMissing: 'This product has no Google Authenticator secret configured.',
+      notConfigured: 'Not configured',
+      smsTitle: 'SMS Code',
+      configuredPhone: 'SMS receiving is configured',
+      noPhone: 'No phone configured',
+      viewSms: 'View SMS',
+      readSms: 'Reading',
+      smsHint: 'Click to let the backend read the latest SMS and extract the code.',
+      smsReading: 'Reading the latest SMS...',
+      smsRead: 'Latest SMS read.',
+      smsFailed: 'Failed to read SMS code',
+      smsNotFound: 'Not found',
+      smsRawInvalid: 'The SMS receiving content is not an embeddable URL. Check the SMS field in the admin panel.',
+      smsMissing: 'This product has no SMS receiving URL configured.',
+      mailTitle: 'Recovery Email Code',
+      noMail: 'No email configured',
+      readMail: 'Read Email',
+      readMailLoading: 'Reading',
+      mailHint: 'Read the latest recovery email code.',
+      mailMissing: 'This product has no recovery email configured.',
+      mailReading: 'Reading the latest recovery email...',
+      mailRead: 'Latest recovery email read.',
+      mailFailed: 'Failed to read recovery email code',
+      expired: 'Expired',
+      validDays: (days) => `Valid ${days} ${days === 1 ? 'day' : 'days'}`,
+      validDaysHours: (days, hours) =>
+        `Valid ${days} ${days === 1 ? 'day' : 'days'} ${hours} ${hours === 1 ? 'hour' : 'hours'}`,
+      validHoursMinutes: (hours, minutes) =>
+        `Valid ${hours} ${hours === 1 ? 'hour' : 'hours'} ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`,
+      validMinutes: (minutes) => `Valid ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`,
+      validLessMinute: 'Valid <1 minute',
+      keyLabel: (idx) => `Secret ${idx + 1}`,
+      digitsMeta: (digits) => `${digits} digits`,
+      copyTitle: 'Click to copy',
+      invalidSecret: '— Invalid secret —',
+      copied: (text) => `Copied: ${text}`,
+      copyFailed: 'Copy failed. Please select it manually.',
+      webCryptoMissing: 'This browser does not support Web Crypto, so codes cannot be generated.',
+      loadingStatus: 'Loading verification details...',
+      sessionFailed: 'Failed to load verification link',
+    },
+  };
 
   // DOM 引用
   const el = {
@@ -28,7 +168,7 @@
     algoSelect: document.getElementById('algoSelect'),
     rememberToggle: document.getElementById('rememberToggle'),
     clearBtn: document.getElementById('clearBtn'),
-    themeToggle: document.getElementById('themeToggle'),
+    languageToggle: document.getElementById('languageToggle'),
     toast: document.getElementById('toast'),
     tokenPanel: document.getElementById('tokenPanel'),
     tokenTitle: document.getElementById('tokenTitle'),
@@ -39,9 +179,9 @@
     tokenTotpCopy: document.getElementById('tokenTotpCopy'),
     tokenTotpCountdown: document.getElementById('tokenTotpCountdown'),
     tokenTotpMessage: document.getElementById('tokenTotpMessage'),
-    tokenSmsFrameWrap: document.getElementById('tokenSmsFrameWrap'),
-    tokenSmsFrame: document.getElementById('tokenSmsFrame'),
     tokenSmsOpen: document.getElementById('tokenSmsOpen'),
+    tokenSmsCode: document.getElementById('tokenSmsCode'),
+    tokenSmsPhone: document.getElementById('tokenSmsPhone'),
     tokenSmsMessage: document.getElementById('tokenSmsMessage'),
     tokenMailEmail: document.getElementById('tokenMailEmail'),
     tokenMailCode: document.getElementById('tokenMailCode'),
@@ -58,6 +198,66 @@
   let verifierSecret = '';
   let verifierExpiresAt = '';
   let verifierLastCounter = -1;
+  let verifierProduct = null;
+  let currentLanguage = DEFAULT_LANGUAGE;
+
+  function t(key, ...args) {
+    const value = I18N[currentLanguage][key] ?? I18N[DEFAULT_LANGUAGE][key] ?? key;
+    return typeof value === 'function' ? value(...args) : value;
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = t('langAttr');
+    document.querySelectorAll('[data-i18n]').forEach((node) => {
+      node.textContent = t(node.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((node) => {
+      node.setAttribute('placeholder', t(node.dataset.i18nPlaceholder));
+    });
+    el.languageToggle.textContent = t('langToggle');
+    Array.from(el.digitsSelect.options).forEach((option) => {
+      option.textContent = currentLanguage === 'en' ? `${option.value} digits` : `${option.value} 位`;
+    });
+
+    cards.forEach((card) => {
+      card.meta.textContent = `${card.entry.algorithm} · ${t('digitsMeta', card.entry.digits)} · ${card.entry.period}s`;
+      card.codeWrap.title = t('copyTitle');
+    });
+
+    if (verifierToken) {
+      renderVerifierStaticText();
+      tickVerifierMode();
+    }
+  }
+
+  function renderVerifierStaticText() {
+    if (!verifierToken) return;
+    if (verifierProduct) {
+      el.tokenTitle.textContent = verifierProduct.label ? t('tokenTitleWithLabel', verifierProduct.label) : t('customerPage');
+      el.tokenMeta.textContent = t('tokenMeta');
+    }
+    if (verifierSecret) {
+      el.tokenTotpMessage.textContent = t('generatedLocal');
+    } else {
+      el.tokenTotpCountdown.textContent = t('notConfigured');
+      el.tokenTotpMessage.textContent = t('totpMissing');
+    }
+    if (verifierProduct?.capabilities?.sms) {
+      if (!el.tokenSmsOpen.dataset.raw && el.tokenSmsCode.textContent !== t('readSms')) {
+        el.tokenSmsCode.textContent = t('viewSms');
+      }
+      el.tokenSmsMessage.textContent = t('smsHint');
+    }
+    const recoveryEmail = verifierProduct
+      ? verifierProduct.recoveryEmail || verifierProduct.hotmailEmail || verifierProduct.mailEmail || verifierProduct.email || ''
+      : '';
+    if (recoveryEmail) {
+      if (!el.tokenMailRefresh.dataset.raw && el.tokenMailCode.textContent !== t('readMailLoading')) {
+        el.tokenMailCode.textContent = t('readMail');
+      }
+      el.tokenMailMessage.textContent = t('mailHint');
+    }
+  }
 
   function apiBase() {
     const params = new URLSearchParams(window.location.search);
@@ -97,7 +297,7 @@
         };
       }
       return {
-        label: `密钥 ${idx + 1}`,
+        label: t('keyLabel', idx),
         secret: line,
         digits: settings.digits,
         period: settings.period,
@@ -127,7 +327,7 @@
 
     const meta = document.createElement('span');
     meta.className = 'code-card__meta';
-    meta.textContent = `${entry.algorithm} · ${entry.digits}位 · ${entry.period}s`;
+    meta.textContent = `${entry.algorithm} · ${t('digitsMeta', entry.digits)} · ${entry.period}s`;
 
     info.appendChild(label);
     info.appendChild(meta);
@@ -135,7 +335,7 @@
     const codeWrap = document.createElement('button');
     codeWrap.type = 'button';
     codeWrap.className = 'code-card__code';
-    codeWrap.title = '点击复制';
+    codeWrap.title = t('copyTitle');
 
     const codeText = document.createElement('span');
     codeText.className = 'code-card__digits';
@@ -195,7 +395,7 @@
           codeWrap.dataset.raw = code;
           codeWrap.classList.remove('is-error');
         } catch (err) {
-          codeText.textContent = '— 无效密钥 —';
+          codeText.textContent = t('invalidSecret');
           codeWrap.dataset.raw = '—';
           codeWrap.classList.add('is-error');
         }
@@ -267,7 +467,7 @@
     if (!verifierSecret) return;
     const counter = Math.floor(Date.now() / 1000 / 30);
     const seconds = tokenSecondsRemaining();
-    el.tokenTotpCountdown.textContent = `${seconds}s 后刷新`;
+    el.tokenTotpCountdown.textContent = t('refreshIn', seconds);
     if (!force && counter === verifierLastCounter) return;
     verifierLastCounter = counter;
     try {
@@ -278,12 +478,24 @@
       });
       el.tokenTotpCode.textContent = formatTokenCode(code);
       el.tokenTotpCopy.dataset.raw = code;
-      el.tokenTotpMessage.textContent = '本地生成，点击验证码可复制。';
+      el.tokenTotpMessage.textContent = t('generatedLocal');
     } catch (_) {
       el.tokenTotpCode.textContent = '------';
       el.tokenTotpCopy.dataset.raw = '';
-      el.tokenTotpMessage.textContent = '谷歌验证器密钥格式不正确。';
+      el.tokenTotpMessage.textContent = t('invalidTotpSecret');
     }
+  }
+
+  function formatTokenExpiry(secondsLeft) {
+    if (secondsLeft <= 0) return t('expired');
+    const days = Math.floor(secondsLeft / 86400);
+    const hours = Math.floor((secondsLeft % 86400) / 3600);
+    const minutes = Math.floor((secondsLeft % 3600) / 60);
+    if (days > 0 && hours > 0) return t('validDaysHours', days, hours);
+    if (days > 0) return t('validDays', days);
+    if (hours > 0) return t('validHoursMinutes', hours, minutes);
+    if (minutes > 0) return t('validMinutes', minutes);
+    return t('validLessMinute');
   }
 
   function tickVerifierMode() {
@@ -291,18 +503,17 @@
     refreshVerifierTotp(false);
     if (verifierExpiresAt) {
       const secondsLeft = Math.max(0, Math.floor((new Date(verifierExpiresAt).getTime() - Date.now()) / 1000));
-      const minutes = Math.floor(secondsLeft / 60);
-      const seconds = secondsLeft % 60;
-      el.tokenExpires.textContent = secondsLeft ? `有效 ${minutes}:${String(seconds).padStart(2, '0')}` : '已过期';
+      el.tokenExpires.textContent = formatTokenExpiry(secondsLeft);
     }
   }
 
   function setupVerifierProduct(data) {
     const product = data.product || {};
+    verifierProduct = product;
     verifierSecret = product.googleAuth || '';
     verifierExpiresAt = data.expiresAt || '';
-    el.tokenTitle.textContent = product.label ? `接码页 · ${product.label}` : '客户接码页';
-    el.tokenMeta.textContent = '三种验证码集中查看，无需手动输入长密钥、手机号或邮箱。';
+    el.tokenTitle.textContent = product.label ? t('tokenTitleWithLabel', product.label) : t('customerPage');
+    el.tokenMeta.textContent = t('tokenMeta');
     el.tokenPanel.hidden = false;
     setTokenStatus('', false);
 
@@ -310,60 +521,88 @@
       refreshVerifierTotp(true);
     } else {
       el.tokenTotpCode.textContent = '------';
-      el.tokenTotpCountdown.textContent = '未配置';
-      el.tokenTotpMessage.textContent = '该产品没有配置 Google 验证器密钥。';
+      el.tokenTotpCountdown.textContent = t('notConfigured');
+      el.tokenTotpMessage.textContent = t('totpMissing');
     }
 
-    if (product.smsUrl) {
-      el.tokenSmsFrame.src = product.smsUrl;
-      el.tokenSmsOpen.href = product.smsUrl;
-      el.tokenSmsOpen.hidden = false;
-      el.tokenSmsFrameWrap.hidden = false;
-      el.tokenSmsMessage.textContent = product.phone ? `手机号：${product.phone}` : '已打开后台配置的接码页面。';
+    if (product.capabilities?.sms) {
+      el.tokenSmsPhone.textContent = product.phone || t('configuredPhone');
+      el.tokenSmsCode.textContent = t('viewSms');
+      el.tokenSmsOpen.disabled = false;
+      el.tokenSmsOpen.dataset.raw = '';
+      el.tokenSmsMessage.textContent = t('smsHint');
     } else {
-      el.tokenSmsFrameWrap.hidden = true;
-      el.tokenSmsOpen.hidden = true;
+      el.tokenSmsPhone.textContent = product.phone || t('noPhone');
+      el.tokenSmsCode.textContent = t('notConfigured');
+      el.tokenSmsOpen.disabled = true;
+      el.tokenSmsOpen.dataset.raw = '';
       el.tokenSmsMessage.textContent = product.smsRaw
-        ? '手机接码内容不是可嵌入网址，请在后台检查接码字段。'
-        : '该产品没有配置手机接码网址。';
+        ? t('smsRawInvalid')
+        : t('smsMissing');
     }
 
-    el.tokenMailEmail.textContent = product.hotmailEmail || '未配置邮箱';
-    el.tokenMailMessage.textContent = product.hotmailEmail
-      ? '点击读取最新 Hotmail 邮件验证码。'
-      : '该产品没有配置 Hotmail 邮箱。';
+    const recoveryEmail = product.recoveryEmail || product.hotmailEmail || product.mailEmail || product.email || '';
+    el.tokenMailEmail.textContent = recoveryEmail || t('noMail');
+    el.tokenMailCode.textContent = t('readMail');
+    el.tokenMailRefresh.dataset.raw = '';
+    el.tokenMailMessage.textContent = recoveryEmail ? t('mailHint') : t('mailMissing');
+  }
+
+  async function refreshSmsCode() {
+    if (!verifierToken || el.tokenSmsOpen.disabled) return;
+    const cached = el.tokenSmsOpen.dataset.raw || '';
+    if (cached && el.tokenSmsCode.textContent !== t('readSms')) {
+      copyToClipboard(cached);
+      return;
+    }
+    el.tokenSmsCode.textContent = t('readSms');
+    el.tokenSmsMessage.textContent = t('smsReading');
+    try {
+      const response = await fetch(`${apiBase()}/api/verifier-sms-code?token=${encodeURIComponent(verifierToken)}`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || t('smsFailed'));
+      el.tokenSmsCode.textContent = data.code ? formatTokenCode(data.code) : t('smsNotFound');
+      el.tokenSmsOpen.dataset.raw = data.code || '';
+      el.tokenSmsMessage.textContent = data.message || t('smsRead');
+    } catch (error) {
+      el.tokenSmsCode.textContent = t('smsNotFound');
+      el.tokenSmsOpen.dataset.raw = '';
+      el.tokenSmsMessage.textContent = error.message || t('smsFailed');
+    }
   }
 
   async function loadVerifierSession() {
     document.body.classList.add('token-mode');
     el.tokenPanel.hidden = false;
-    setTokenStatus('正在读取接码资料...', false);
+    setTokenStatus(t('loadingStatus'), false);
     try {
       const response = await fetch(`${apiBase()}/api/verifier-session?token=${encodeURIComponent(verifierToken)}`);
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.message || '接码链接读取失败');
+      if (!response.ok) throw new Error(data.message || t('sessionFailed'));
       setupVerifierProduct(data);
     } catch (error) {
-      el.tokenTitle.textContent = '接码链接不可用';
-      el.tokenMeta.textContent = '请返回后台重新生成客户接码页链接。';
-      setTokenStatus(error.message || '接码链接读取失败', true);
+      el.tokenTitle.textContent = t('unavailableTitle');
+      el.tokenMeta.textContent = t('unavailableMeta');
+      setTokenStatus(error.message || t('sessionFailed'), true);
     }
   }
 
   async function refreshMailCode() {
     if (!verifierToken) return;
-    el.tokenMailCode.textContent = '读取中';
-    el.tokenMailMessage.textContent = '后台正在读取最新邮件...';
+    el.tokenMailCode.textContent = t('readMailLoading');
+    el.tokenMailMessage.textContent = t('mailReading');
     try {
       const response = await fetch(`${apiBase()}/api/verifier-mail-code?token=${encodeURIComponent(verifierToken)}`);
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.message || '邮箱验证码读取失败');
-      el.tokenMailCode.textContent = data.code || '未找到';
-      el.tokenMailMessage.textContent = data.message || '已读取最新邮件。';
+      if (!response.ok) throw new Error(data.message || t('mailFailed'));
+      el.tokenMailCode.textContent = data.code || t('smsNotFound');
+      el.tokenMailRefresh.dataset.raw = data.code || '';
+      el.tokenMailMessage.textContent = data.message || t('mailRead');
       if (data.code) copyToClipboard(data.code);
     } catch (error) {
-      el.tokenMailCode.textContent = '未配置';
-      el.tokenMailMessage.textContent = error.message || '邮箱验证码读取失败。';
+      el.tokenMailCode.textContent = t('notConfigured');
+      el.tokenMailRefresh.dataset.raw = '';
+      el.tokenMailMessage.textContent = error.message || t('mailFailed');
     }
   }
 
@@ -391,9 +630,9 @@
         document.execCommand('copy');
         document.body.removeChild(ta);
       }
-      showToast(`已复制：${text}`);
+      showToast(t('copied', text));
     } catch (_) {
-      showToast('复制失败，请手动选择');
+      showToast(t('copyFailed'));
     }
   }
 
@@ -421,13 +660,11 @@
   }
 
   function loadState() {
-    // 主题
-    const savedTheme = localStorage.getItem(STORAGE_THEME);
-    if (savedTheme) {
-      document.documentElement.dataset.theme = savedTheme;
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.dataset.theme = 'dark';
-    }
+    document.documentElement.dataset.theme = 'light';
+
+    const savedLanguage = localStorage.getItem(STORAGE_LANGUAGE);
+    currentLanguage = savedLanguage === 'en' ? 'en' : DEFAULT_LANGUAGE;
+    applyLanguage();
 
     // 设置
     try {
@@ -448,13 +685,12 @@
     }
   }
 
-  /* ---------- 主题 ---------- */
-  function toggleTheme() {
-    const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
+  /* ---------- 语言 ---------- */
+  function toggleLanguage() {
+    currentLanguage = currentLanguage === 'en' ? 'zh' : 'en';
+    applyLanguage();
     try {
-      localStorage.setItem(STORAGE_THEME, next);
+      localStorage.setItem(STORAGE_LANGUAGE, currentLanguage);
     } catch (_) {}
   }
 
@@ -489,18 +725,19 @@
       el.keyInput.focus();
     });
 
-    el.themeToggle.addEventListener('click', toggleTheme);
+    el.languageToggle.addEventListener('click', toggleLanguage);
     el.tokenTotpCopy.addEventListener('click', () => {
       const raw = el.tokenTotpCopy.dataset.raw || '';
       if (raw) copyToClipboard(raw);
     });
     el.tokenMailRefresh.addEventListener('click', refreshMailCode);
+    el.tokenSmsOpen.addEventListener('click', refreshSmsCode);
   }
 
   /* ---------- 启动 ---------- */
   function init() {
     if (!window.crypto || !window.crypto.subtle) {
-      showToast('当前浏览器不支持 Web Crypto，无法生成验证码');
+      showToast(t('webCryptoMissing'));
       return;
     }
     loadState();
