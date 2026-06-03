@@ -163,15 +163,24 @@
           </article>
 
           <article class="verify-card verify-card--sms">
-            <div class="verify-card__head">
-              <span class="eyebrow">PHONE SMS</span>
-              <strong>手机验证码</strong>
+            <div class="verify-card__top">
+              <div class="verify-card__head">
+                <span class="eyebrow">PHONE SMS</span>
+                <strong>手机验证码</strong>
+              </div>
+              <a id="tokenSmsOpen" class="btn btn--ghost verify-open" href="#" target="_blank" rel="noreferrer" hidden>外部打开</a>
             </div>
             <p id="tokenSmsMessage" class="verify-message">正在准备接码窗口...</p>
             <div id="tokenSmsFrameWrap" class="sms-frame" hidden>
-              <iframe id="tokenSmsFrame" title="手机验证码接码页面"></iframe>
+              <div class="sms-frame__chrome" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="sms-frame__viewport">
+                <iframe id="tokenSmsFrame" title="手机验证码接码页面"></iframe>
+              </div>
             </div>
-            <a id="tokenSmsOpen" class="btn btn--ghost verify-open" href="#" target="_blank" rel="noreferrer" hidden>外部打开</a>
           </article>
 
           <article class="verify-card">

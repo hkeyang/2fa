@@ -300,6 +300,13 @@ body.token-mode .layout {
   gap: 4px;
 }
 
+.verify-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
 .verify-card__head strong {
   font-size: 18px;
 }
@@ -353,27 +360,59 @@ body.token-mode .layout {
 
 .sms-frame {
   flex: 1;
-  min-height: 340px;
+  min-height: 300px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--field-bg);
+  background: var(--bg-2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-.sms-frame iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
+.sms-frame__chrome {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-inner);
+}
+
+.sms-frame__chrome span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  opacity: 0.45;
+}
+
+.sms-frame__viewport {
+  height: calc(100% - 28px);
+  min-height: 272px;
+  overflow: hidden;
   background: #fff;
 }
 
+.sms-frame iframe {
+  width: 142%;
+  height: 142%;
+  border: 0;
+  background: #fff;
+  transform: scale(0.704);
+  transform-origin: 0 0;
+}
+
 .verify-open {
+  flex: 0 0 auto;
   width: max-content;
+  min-height: 32px;
+  padding: 6px var(--space-3);
+  font-size: 12px;
   text-decoration: none;
 }
 
 .verify-card--sms {
-  grid-column: span 1;
+  grid-column: span 2;
 }
 
 .panel__head {
@@ -811,6 +850,9 @@ body.token-mode .layout {
   .verify-grid {
     grid-template-columns: 1fr;
   }
+  .verify-card--sms {
+    grid-column: span 1;
+  }
   .token-hero {
     flex-direction: column;
   }
@@ -832,8 +874,25 @@ body.token-mode .layout {
   .btn--ghost[href] {
     display: none;
   }
+  .verify-open[href] {
+    display: inline-flex;
+  }
   .panel__title {
     font-size: 20px;
+  }
+  .verify-card {
+    padding: var(--space-4);
+  }
+  .sms-frame {
+    min-height: 270px;
+  }
+  .sms-frame__viewport {
+    min-height: 242px;
+  }
+  .sms-frame iframe {
+    width: 150%;
+    height: 150%;
+    transform: scale(0.667);
   }
 }
 
