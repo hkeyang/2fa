@@ -210,6 +210,172 @@ button {
   box-shadow: var(--shadow-md);
 }
 
+body.token-mode .panel--input,
+body.token-mode .panel--output {
+  display: none;
+}
+
+body.token-mode .layout {
+  grid-template-columns: 1fr;
+}
+
+.token-panel {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.token-panel[hidden] {
+  display: none;
+}
+
+.token-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+.token-expire {
+  flex: 0 0 auto;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
+  background: var(--glass-inner);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.token-status {
+  min-height: 42px;
+  display: none;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  background: var(--brand-soft);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.token-status.is-visible {
+  display: flex;
+}
+
+.token-status.is-error {
+  background: rgba(216, 69, 59, .1);
+  color: var(--danger);
+}
+
+.verify-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.verify-card {
+  min-height: 280px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow: hidden;
+}
+
+.verify-card__head {
+  display: grid;
+  gap: 4px;
+}
+
+.verify-card__head strong {
+  font-size: 18px;
+}
+
+.totp-display {
+  min-height: 90px;
+  width: 100%;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-inner);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.totp-display span {
+  font-family: var(--font-mono);
+  font-size: 38px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.mail-code span {
+  font-size: 24px;
+}
+
+.verify-card__foot {
+  min-height: 24px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.verify-message {
+  min-height: 22px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.mail-address {
+  min-height: 26px;
+  color: var(--text-muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sms-frame {
+  flex: 1;
+  min-height: 340px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--field-bg);
+}
+
+.sms-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.verify-open {
+  width: max-content;
+  text-decoration: none;
+}
+
+.verify-card--sms {
+  grid-column: span 1;
+}
+
 .panel__head {
   margin-bottom: var(--space-5);
 }
@@ -641,6 +807,12 @@ button {
 @media (max-width: 860px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+  .verify-grid {
+    grid-template-columns: 1fr;
+  }
+  .token-hero {
+    flex-direction: column;
   }
   .app {
     padding: 0 var(--space-4);

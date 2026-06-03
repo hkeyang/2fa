@@ -14,6 +14,7 @@
   const STORAGE_REMEMBER = 'totp.remember';
   const STORAGE_THEME = 'totp.theme';
   const STORAGE_SETTINGS = 'totp.settings';
+  const DEFAULT_API_BASE = 'https://youxi.aisea.space';
 
   // DOM 引用
   const el = {
@@ -29,6 +30,23 @@
     clearBtn: document.getElementById('clearBtn'),
     themeToggle: document.getElementById('themeToggle'),
     toast: document.getElementById('toast'),
+    tokenPanel: document.getElementById('tokenPanel'),
+    tokenTitle: document.getElementById('tokenTitle'),
+    tokenMeta: document.getElementById('tokenMeta'),
+    tokenExpires: document.getElementById('tokenExpires'),
+    tokenStatus: document.getElementById('tokenStatus'),
+    tokenTotpCode: document.getElementById('tokenTotpCode'),
+    tokenTotpCopy: document.getElementById('tokenTotpCopy'),
+    tokenTotpCountdown: document.getElementById('tokenTotpCountdown'),
+    tokenTotpMessage: document.getElementById('tokenTotpMessage'),
+    tokenSmsFrameWrap: document.getElementById('tokenSmsFrameWrap'),
+    tokenSmsFrame: document.getElementById('tokenSmsFrame'),
+    tokenSmsOpen: document.getElementById('tokenSmsOpen'),
+    tokenSmsMessage: document.getElementById('tokenSmsMessage'),
+    tokenMailEmail: document.getElementById('tokenMailEmail'),
+    tokenMailCode: document.getElementById('tokenMailCode'),
+    tokenMailRefresh: document.getElementById('tokenMailRefresh'),
+    tokenMailMessage: document.getElementById('tokenMailMessage'),
   };
 
   // 进度环周长（r=16）
@@ -36,6 +54,15 @@
   el.countdownProgress.style.strokeDasharray = String(RING_CIRCUMFERENCE);
 
   let toastTimer = null;
+  let verifierToken = '';
+  let verifierSecret = '';
+  let verifierExpiresAt = '';
+  let verifierLastCounter = -1;
+
+  function apiBase() {
+    const params = new URLSearchParams(window.location.search);
+    return (params.get('apiBase') || DEFAULT_API_BASE).replace(/\/+$/, '');
+  }
 
   /** 当前界面选择的全局参数（otpauth 链接可在单条上覆盖） */
   function currentSettings() {
@@ -212,6 +239,134 @@
     }
   }
 
+  function tokenFromLocation() {
+    return new URLSearchParams(window.location.search).get('token') || '';
+  }
+
+  function setTokenStatus(message, isError) {
+    el.tokenStatus.textContent = message || '';
+    el.tokenStatus.classList.toggle('is-visible', Boolean(message));
+    el.tokenStatus.classList.toggle('is-error', Boolean(isError));
+  }
+
+  function normalizeVerifierSecret(value) {
+    const parsed = window.TOTP.parseOtpauth(value);
+    return parsed?.secret || String(value || '').trim();
+  }
+
+  function tokenSecondsRemaining() {
+    return Math.ceil(window.TOTP.secondsRemaining(30));
+  }
+
+  function formatTokenCode(code) {
+    if (!code) return '------';
+    return code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
+  }
+
+  async function refreshVerifierTotp(force) {
+    if (!verifierSecret) return;
+    const counter = Math.floor(Date.now() / 1000 / 30);
+    const seconds = tokenSecondsRemaining();
+    el.tokenTotpCountdown.textContent = `${seconds}s 后刷新`;
+    if (!force && counter === verifierLastCounter) return;
+    verifierLastCounter = counter;
+    try {
+      const code = await window.TOTP.generateTOTP(normalizeVerifierSecret(verifierSecret), {
+        digits: 6,
+        period: 30,
+        algorithm: 'SHA-1',
+      });
+      el.tokenTotpCode.textContent = formatTokenCode(code);
+      el.tokenTotpCopy.dataset.raw = code;
+      el.tokenTotpMessage.textContent = '本地生成，点击验证码可复制。';
+    } catch (_) {
+      el.tokenTotpCode.textContent = '------';
+      el.tokenTotpCopy.dataset.raw = '';
+      el.tokenTotpMessage.textContent = '谷歌验证器密钥格式不正确。';
+    }
+  }
+
+  function tickVerifierMode() {
+    if (!verifierToken) return;
+    refreshVerifierTotp(false);
+    if (verifierExpiresAt) {
+      const secondsLeft = Math.max(0, Math.floor((new Date(verifierExpiresAt).getTime() - Date.now()) / 1000));
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      el.tokenExpires.textContent = secondsLeft ? `有效 ${minutes}:${String(seconds).padStart(2, '0')}` : '已过期';
+    }
+  }
+
+  function setupVerifierProduct(data) {
+    const product = data.product || {};
+    verifierSecret = product.googleAuth || '';
+    verifierExpiresAt = data.expiresAt || '';
+    el.tokenTitle.textContent = product.label ? `接码页 · ${product.label}` : '客户接码页';
+    el.tokenMeta.textContent = '三种验证码集中查看，无需手动输入长密钥、手机号或邮箱。';
+    el.tokenPanel.hidden = false;
+    setTokenStatus('', false);
+
+    if (product.capabilities?.totp && verifierSecret) {
+      refreshVerifierTotp(true);
+    } else {
+      el.tokenTotpCode.textContent = '------';
+      el.tokenTotpCountdown.textContent = '未配置';
+      el.tokenTotpMessage.textContent = '该产品没有配置 Google 验证器密钥。';
+    }
+
+    if (product.smsUrl) {
+      el.tokenSmsFrame.src = product.smsUrl;
+      el.tokenSmsOpen.href = product.smsUrl;
+      el.tokenSmsOpen.hidden = false;
+      el.tokenSmsFrameWrap.hidden = false;
+      el.tokenSmsMessage.textContent = product.phone ? `手机号：${product.phone}` : '已打开后台配置的接码页面。';
+    } else {
+      el.tokenSmsFrameWrap.hidden = true;
+      el.tokenSmsOpen.hidden = true;
+      el.tokenSmsMessage.textContent = product.smsRaw
+        ? '手机接码内容不是可嵌入网址，请在后台检查接码字段。'
+        : '该产品没有配置手机接码网址。';
+    }
+
+    el.tokenMailEmail.textContent = product.hotmailEmail || '未配置邮箱';
+    el.tokenMailMessage.textContent = product.hotmailEmail
+      ? '点击读取最新 Hotmail 邮件验证码。'
+      : '该产品没有配置 Hotmail 邮箱。';
+  }
+
+  async function loadVerifierSession() {
+    document.body.classList.add('token-mode');
+    el.tokenPanel.hidden = false;
+    setTokenStatus('正在读取接码资料...', false);
+    try {
+      const response = await fetch(`${apiBase()}/api/verifier-session?token=${encodeURIComponent(verifierToken)}`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || '接码链接读取失败');
+      setupVerifierProduct(data);
+    } catch (error) {
+      el.tokenTitle.textContent = '接码链接不可用';
+      el.tokenMeta.textContent = '请返回后台重新生成客户接码页链接。';
+      setTokenStatus(error.message || '接码链接读取失败', true);
+    }
+  }
+
+  async function refreshMailCode() {
+    if (!verifierToken) return;
+    el.tokenMailCode.textContent = '读取中';
+    el.tokenMailMessage.textContent = '后台正在读取最新邮件...';
+    try {
+      const response = await fetch(`${apiBase()}/api/verifier-mail-code?token=${encodeURIComponent(verifierToken)}`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || '邮箱验证码读取失败');
+      el.tokenMailCode.textContent = data.code || '未找到';
+      el.tokenMailMessage.textContent = data.message || '已读取最新邮件。';
+      if (data.code) copyToClipboard(data.code);
+    } catch (error) {
+      el.tokenMailCode.textContent = '未配置';
+      el.tokenMailMessage.textContent = error.message || '邮箱验证码读取失败。';
+    }
+  }
+
   /** 输入变化时：重建卡片 + 立即刷新一次 */
   function onInputChange() {
     const entries = parseEntries();
@@ -335,6 +490,11 @@
     });
 
     el.themeToggle.addEventListener('click', toggleTheme);
+    el.tokenTotpCopy.addEventListener('click', () => {
+      const raw = el.tokenTotpCopy.dataset.raw || '';
+      if (raw) copyToClipboard(raw);
+    });
+    el.tokenMailRefresh.addEventListener('click', refreshMailCode);
   }
 
   /* ---------- 启动 ---------- */
@@ -345,6 +505,13 @@
     }
     loadState();
     bindEvents();
+    verifierToken = tokenFromLocation();
+    if (verifierToken) {
+      loadVerifierSession();
+      tickVerifierMode();
+      setInterval(tickVerifierMode, 250);
+      return;
+    }
     onInputChange();
     tick();
     setInterval(tick, 250);

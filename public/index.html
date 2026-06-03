@@ -134,6 +134,59 @@
           <p>在左侧输入密钥后，这里会实时显示验证码。</p>
         </div>
       </section>
+
+      <section id="tokenPanel" class="token-panel" aria-label="客户接码页" hidden>
+        <div class="token-hero">
+          <div>
+            <span class="eyebrow">VERIFICATION LINK</span>
+            <h1 id="tokenTitle" class="panel__title">客户接码页</h1>
+            <p id="tokenMeta" class="panel__subtitle">正在读取接码资料...</p>
+          </div>
+          <span id="tokenExpires" class="token-expire"></span>
+        </div>
+
+        <div id="tokenStatus" class="token-status" role="status" aria-live="polite"></div>
+
+        <div class="verify-grid">
+          <article class="verify-card">
+            <div class="verify-card__head">
+              <span class="eyebrow">GOOGLE AUTH</span>
+              <strong>Google 验证器</strong>
+            </div>
+            <button id="tokenTotpCopy" class="totp-display" type="button" title="点击复制当前验证码">
+              <span id="tokenTotpCode">------</span>
+            </button>
+            <div class="verify-card__foot">
+              <span id="tokenTotpCountdown">本地 30 秒刷新</span>
+            </div>
+            <p id="tokenTotpMessage" class="verify-message"></p>
+          </article>
+
+          <article class="verify-card verify-card--sms">
+            <div class="verify-card__head">
+              <span class="eyebrow">PHONE SMS</span>
+              <strong>手机验证码</strong>
+            </div>
+            <p id="tokenSmsMessage" class="verify-message">正在准备接码窗口...</p>
+            <div id="tokenSmsFrameWrap" class="sms-frame" hidden>
+              <iframe id="tokenSmsFrame" title="手机验证码接码页面"></iframe>
+            </div>
+            <a id="tokenSmsOpen" class="btn btn--ghost verify-open" href="#" target="_blank" rel="noreferrer" hidden>外部打开</a>
+          </article>
+
+          <article class="verify-card">
+            <div class="verify-card__head">
+              <span class="eyebrow">HOTMAIL</span>
+              <strong>Hotmail 邮箱验证码</strong>
+            </div>
+            <span id="tokenMailEmail" class="mail-address"></span>
+            <button id="tokenMailRefresh" class="totp-display mail-code" type="button">
+              <span id="tokenMailCode">读取邮件</span>
+            </button>
+            <p id="tokenMailMessage" class="verify-message">点击后由后台读取最新邮件并提取验证码。</p>
+          </article>
+        </div>
+      </section>
     </main>
   </div>
 
