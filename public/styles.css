@@ -888,6 +888,398 @@ body.token-mode .verify-message {
   transform: translate(-50%, 0);
 }
 
+/* ---------- 接码页：按插图稿重制 ---------- */
+body.token-mode {
+  --token-text: #11162c;
+  --token-muted: #66718f;
+  --token-line: #dfe5f4;
+  --token-blue: #1769ff;
+  --token-green: #08785e;
+  --token-purple: #6c20ca;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: var(--token-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(220, 251, 248, 0.9), transparent 28%),
+    radial-gradient(circle at 88% 9%, rgba(225, 229, 255, 0.92), transparent 12%),
+    linear-gradient(135deg, #fbffff 0%, #f8fbff 42%, #f2f5ff 100%);
+}
+
+body.token-mode .bg-decor {
+  background:
+    radial-gradient(circle at 1% 1%, rgba(211, 251, 247, 0.85), transparent 27%),
+    radial-gradient(circle at 80% 75%, rgba(205, 232, 255, 0.82), transparent 24%),
+    radial-gradient(circle at 88% 12%, rgba(220, 224, 255, 0.9), transparent 13%),
+    linear-gradient(137deg, #fbffff 0%, #f8fbff 48%, #f4f6ff 100%);
+}
+
+body.token-mode .bg-decor::before,
+body.token-mode .bg-decor::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+body.token-mode .bg-decor::before {
+  right: -8.5vw;
+  bottom: -24vh;
+  width: 45vw;
+  height: 83vh;
+  border-radius: 48% 0 0 48%;
+  background:
+    linear-gradient(112deg, rgba(166, 208, 255, 0.02), rgba(149, 163, 252, 0.26)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(173, 185, 249, 0.24));
+  box-shadow:
+    inset 28px 12px 42px rgba(255, 255, 255, 0.72),
+    inset -20px -26px 46px rgba(153, 164, 237, 0.2);
+  transform: rotate(-19deg);
+  filter: blur(0.5px);
+}
+
+body.token-mode .bg-decor::after {
+  left: 57vw;
+  bottom: -11vh;
+  width: 20vw;
+  height: 45vh;
+  border-radius: 50%;
+  background: linear-gradient(160deg, rgba(213, 236, 255, 0.86), rgba(199, 201, 253, 0.5));
+  box-shadow:
+    inset 18px 18px 34px rgba(255, 255, 255, 0.7),
+    0 28px 68px rgba(110, 139, 216, 0.12);
+}
+
+body.token-mode .bg-grid {
+  display: none;
+}
+
+body.token-mode .app {
+  max-width: 1530px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0;
+}
+
+body.token-mode .topbar {
+  padding: 30px 0 36px;
+}
+
+body.token-mode .brand {
+  gap: 14px;
+}
+
+body.token-mode .brand__logo {
+  width: 62px;
+  height: 62px;
+  border-radius: 21px;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(213, 220, 239, 0.82);
+  box-shadow:
+    0 14px 34px rgba(66, 98, 164, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body.token-mode .brand__logo svg {
+  width: 36px;
+  height: 36px;
+  stroke-width: 2.8;
+}
+
+body.token-mode .brand__name {
+  color: #10152d;
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.06;
+}
+
+body.token-mode .brand__tag {
+  margin-top: 5px;
+  color: #6e7899;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+body.token-mode .lang-toggle {
+  width: 62px;
+  height: 53px;
+  border-radius: 16px;
+  border-color: rgba(203, 210, 232, 0.92);
+  background: rgba(248, 250, 255, 0.6);
+  color: #303b5e;
+  font-size: 18px;
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+body.token-mode .layout {
+  grid-template-columns: 1fr;
+  padding-bottom: 0;
+}
+
+body.token-mode .token-panel {
+  display: grid;
+  grid-template-rows: 224px 0 446px;
+  gap: 44px;
+}
+
+body.token-mode .token-status {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+
+body.token-mode .token-hero,
+body.token-mode .verify-card {
+  border: 1px solid rgba(215, 222, 241, 0.92);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow:
+    0 19px 52px rgba(73, 89, 135, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+body.token-mode .token-hero {
+  min-height: 224px;
+  align-items: center;
+  border-radius: 28px;
+  padding: 34px 53px 36px 35px;
+}
+
+body.token-mode .token-hero__copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+body.token-mode .token-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+}
+
+body.token-mode .token-icon--hero {
+  width: 68px;
+  height: 68px;
+  color: #5d8df4;
+  background: linear-gradient(145deg, #edf4ff, #e8eefc);
+}
+
+body.token-mode .eyebrow {
+  margin-bottom: 13px;
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.155em;
+  color: var(--token-blue);
+}
+
+body.token-mode .token-hero .panel__title {
+  color: var(--token-text);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+body.token-mode .token-hero .panel__subtitle {
+  margin-top: 26px;
+  color: #657092;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+body.token-mode .token-expire {
+  min-width: 250px;
+  height: 49px;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid rgba(218, 221, 240, 0.95);
+  border-radius: 13px;
+  background: rgba(244, 245, 255, 0.82);
+  color: #4c5a80;
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 17px;
+  font-weight: 800;
+  box-shadow:
+    0 8px 18px rgba(58, 68, 120, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+body.token-mode .token-expire::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 3px solid #50618d;
+  border-radius: 50%;
+  background:
+    linear-gradient(#50618d, #50618d) 50% 27% / 2px 6px no-repeat,
+    linear-gradient(#50618d, #50618d) 60% 56% / 6px 2px no-repeat;
+}
+
+body.token-mode .verify-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  height: 446px;
+  min-height: 0;
+}
+
+body.token-mode .verify-card {
+  min-height: 446px;
+  height: 446px;
+  border-radius: 26px;
+  padding: 32px 35px 33px;
+  gap: 0;
+}
+
+body.token-mode .verify-card__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.token-mode .verify-card__head > div {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+body.token-mode .verify-card__head strong {
+  color: #10152d;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+body.token-mode .token-icon--google,
+body.token-mode .token-icon--sms,
+body.token-mode .token-icon--mail {
+  width: 68px;
+  height: 68px;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+body.token-mode .token-icon--google {
+  color: #246eef;
+  background: linear-gradient(145deg, #eef4ff, #e9eefc);
+}
+
+body.token-mode .token-icon--sms {
+  color: #0b9a78;
+  background: linear-gradient(145deg, #ebfbf5, #daf5eb);
+}
+
+body.token-mode .token-icon--mail {
+  color: #7927d9;
+  background: linear-gradient(145deg, #f4edff, #eee5fb);
+}
+
+body.token-mode .verify-card:nth-child(2) .eyebrow {
+  color: #08785e;
+}
+
+body.token-mode .verify-card:nth-child(3) .eyebrow {
+  color: #7a27db;
+}
+
+body.token-mode .totp-display {
+  min-height: 115px;
+  margin-top: 38px;
+  border-radius: 18px;
+  background: rgba(248, 251, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+body.token-mode #tokenTotpCopy {
+  border: 2px solid rgba(156, 188, 255, 0.86);
+  color: #1d67e9;
+}
+
+body.token-mode #tokenSmsOpen {
+  border: 2px solid rgba(139, 211, 193, 0.88);
+  color: #08785e;
+  background: rgba(240, 253, 248, 0.68);
+}
+
+body.token-mode #tokenMailRefresh {
+  border: 2px solid rgba(207, 176, 247, 0.95);
+  color: #6820bd;
+  background: rgba(251, 247, 255, 0.72);
+}
+
+body.token-mode .totp-display:hover:not(:disabled),
+body.token-mode .totp-display.has-code {
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow:
+    0 13px 26px rgba(54, 75, 129, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body.token-mode .totp-display span {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.07em;
+}
+
+body.token-mode .sms-code span,
+body.token-mode .mail-code span {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+body.token-mode .sms-code.has-code span,
+body.token-mode .mail-code.has-code span {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 46px;
+  letter-spacing: 0.07em;
+}
+
+body.token-mode .verify-card__foot {
+  min-height: 61px;
+  margin-top: 29px;
+  padding-top: 0;
+  color: var(--token-blue);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.token-mode .verify-card__foot::after {
+  content: '';
+  display: block;
+  height: 1px;
+  margin-top: 31px;
+  background: var(--token-line);
+}
+
+body.token-mode .verify-card:nth-child(2) .verify-card__foot,
+body.token-mode .verify-card:nth-child(3) .verify-card__foot {
+  color: transparent;
+}
+
+body.token-mode .verify-message {
+  min-height: 0;
+  margin-top: 24px;
+  color: #66718f;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 860px) {
   .layout {
@@ -925,6 +1317,88 @@ body.token-mode .verify-message {
   }
   .verify-card {
     padding: var(--space-4);
+  }
+}
+
+@media (max-width: 860px) {
+  body.token-mode {
+    overflow: auto;
+  }
+  body.token-mode .app {
+    max-width: none;
+    padding: 0 18px 28px;
+  }
+  body.token-mode .topbar {
+    padding: 22px 0 24px;
+  }
+  body.token-mode .brand__logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
+  }
+  body.token-mode .brand__name {
+    font-size: 23px;
+  }
+  body.token-mode .brand__tag {
+    font-size: 14px;
+  }
+  body.token-mode .lang-toggle {
+    width: 54px;
+    height: 46px;
+    font-size: 15px;
+  }
+  body.token-mode .token-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  body.token-mode .token-hero {
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+  body.token-mode .token-hero__copy {
+    gap: 16px;
+  }
+  body.token-mode .token-icon--hero,
+  body.token-mode .token-icon--google,
+  body.token-mode .token-icon--sms,
+  body.token-mode .token-icon--mail {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+  }
+  body.token-mode .token-hero .panel__title {
+    font-size: 25px;
+  }
+  body.token-mode .token-hero .panel__subtitle,
+  body.token-mode .verify-message {
+    font-size: 15px;
+  }
+  body.token-mode .token-expire {
+    min-width: 0;
+    width: max-content;
+    max-width: 100%;
+    height: 44px;
+    font-size: 14px;
+  }
+  body.token-mode .verify-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 18px;
+  }
+  body.token-mode .verify-card {
+    min-height: 0;
+    height: auto;
+    padding: 24px;
+    border-radius: 24px;
+  }
+  body.token-mode .totp-display {
+    min-height: 100px;
+    margin-top: 28px;
   }
 }
 
