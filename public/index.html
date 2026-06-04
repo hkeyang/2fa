@@ -167,10 +167,12 @@
               <span class="eyebrow">PHONE SMS</span>
               <strong data-i18n="smsTitle">手机验证码</strong>
             </div>
-            <span id="tokenSmsPhone" class="mail-address"></span>
             <button id="tokenSmsOpen" class="totp-display sms-code" type="button">
               <span id="tokenSmsCode" data-i18n="viewSms">查看短信</span>
             </button>
+            <div class="verify-card__foot">
+              <span id="tokenSmsState"></span>
+            </div>
             <p id="tokenSmsMessage" class="verify-message" data-i18n="smsHint">点击后由后台读取最新短信并提取验证码。</p>
           </article>
 
@@ -179,10 +181,12 @@
               <span class="eyebrow">MAIL CODE</span>
               <strong data-i18n="mailTitle">恢复邮箱验证码</strong>
             </div>
-            <span id="tokenMailEmail" class="mail-address"></span>
             <button id="tokenMailRefresh" class="totp-display mail-code" type="button">
               <span id="tokenMailCode" data-i18n="readMail">读取邮件</span>
             </button>
+            <div class="verify-card__foot">
+              <span id="tokenMailState"></span>
+            </div>
             <p id="tokenMailMessage" class="verify-message" data-i18n="mailHint">点击读取最新恢复邮件验证码。</p>
           </article>
         </div>

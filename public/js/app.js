@@ -45,6 +45,7 @@
       localRefresh: '本地 30 秒刷新',
       refreshIn: (seconds) => `${seconds}s 后刷新`,
       generatedLocal: '本地生成，点击验证码可复制。',
+      copiedLocal: '点击验证码可复制。',
       invalidTotpSecret: '谷歌验证器密钥格式不正确。',
       totpMissing: '该产品没有配置 Google 验证器密钥。',
       notConfigured: '未配置',
@@ -56,6 +57,7 @@
       smsHint: '点击后由后台读取最新短信并提取验证码。',
       smsReading: '后台正在读取最新短信...',
       smsRead: '已读取最新短信。',
+      smsCodeReady: '点击验证码可复制。',
       smsFailed: '短信验证码读取失败',
       smsNotFound: '未找到',
       smsRawInvalid: '手机接码内容不是可嵌入网址，请在后台检查接码字段。',
@@ -68,6 +70,7 @@
       mailMissing: '该产品没有配置恢复邮箱。',
       mailReading: '后台正在读取最新恢复邮件...',
       mailRead: '已读取最新恢复邮件。',
+      mailCodeReady: '点击验证码可复制。',
       mailFailed: '恢复邮箱验证码读取失败',
       expired: '已过期',
       validDays: (days) => `有效 ${days} 天`,
@@ -112,6 +115,7 @@
       localRefresh: 'Refreshes locally every 30 seconds',
       refreshIn: (seconds) => `Refreshes in ${seconds}s`,
       generatedLocal: 'Generated locally. Click the code to copy.',
+      copiedLocal: 'Click the code to copy.',
       invalidTotpSecret: 'The Google Authenticator secret is invalid.',
       totpMissing: 'This product has no Google Authenticator secret configured.',
       notConfigured: 'Not configured',
@@ -123,6 +127,7 @@
       smsHint: 'Click to let the backend read the latest SMS and extract the code.',
       smsReading: 'Reading the latest SMS...',
       smsRead: 'Latest SMS read.',
+      smsCodeReady: 'Click the code to copy.',
       smsFailed: 'Failed to read SMS code',
       smsNotFound: 'Not found',
       smsRawInvalid: 'The SMS receiving content is not an embeddable URL. Check the SMS field in the admin panel.',
@@ -135,6 +140,7 @@
       mailMissing: 'This product has no recovery email configured.',
       mailReading: 'Reading the latest recovery email...',
       mailRead: 'Latest recovery email read.',
+      mailCodeReady: 'Click the code to copy.',
       mailFailed: 'Failed to read recovery email code',
       expired: 'Expired',
       validDays: (days) => `Valid ${days} ${days === 1 ? 'day' : 'days'}`,
@@ -181,11 +187,11 @@
     tokenTotpMessage: document.getElementById('tokenTotpMessage'),
     tokenSmsOpen: document.getElementById('tokenSmsOpen'),
     tokenSmsCode: document.getElementById('tokenSmsCode'),
-    tokenSmsPhone: document.getElementById('tokenSmsPhone'),
+    tokenSmsState: document.getElementById('tokenSmsState'),
     tokenSmsMessage: document.getElementById('tokenSmsMessage'),
-    tokenMailEmail: document.getElementById('tokenMailEmail'),
     tokenMailCode: document.getElementById('tokenMailCode'),
     tokenMailRefresh: document.getElementById('tokenMailRefresh'),
+    tokenMailState: document.getElementById('tokenMailState'),
     tokenMailMessage: document.getElementById('tokenMailMessage'),
   };
 
@@ -233,7 +239,8 @@
   function renderVerifierStaticText() {
     if (!verifierToken) return;
     if (verifierProduct) {
-      el.tokenTitle.textContent = verifierProduct.label ? t('tokenTitleWithLabel', verifierProduct.label) : t('customerPage');
+      const label = displayVerifierLabel(verifierProduct.label);
+      el.tokenTitle.textContent = label ? t('tokenTitleWithLabel', label) : t('customerPage');
       el.tokenMeta.textContent = t('tokenMeta');
     }
     if (verifierSecret) {
@@ -246,7 +253,8 @@
       if (!el.tokenSmsOpen.dataset.raw && el.tokenSmsCode.textContent !== t('readSms')) {
         el.tokenSmsCode.textContent = t('viewSms');
       }
-      el.tokenSmsMessage.textContent = t('smsHint');
+      el.tokenSmsState.textContent = el.tokenSmsOpen.dataset.raw ? t('smsCodeReady') : '';
+      el.tokenSmsMessage.textContent = el.tokenSmsOpen.dataset.raw ? t('smsRead') : t('smsHint');
     }
     const recoveryEmail = verifierProduct
       ? verifierProduct.recoveryEmail || verifierProduct.hotmailEmail || verifierProduct.mailEmail || verifierProduct.email || ''
@@ -255,8 +263,19 @@
       if (!el.tokenMailRefresh.dataset.raw && el.tokenMailCode.textContent !== t('readMailLoading')) {
         el.tokenMailCode.textContent = t('readMail');
       }
-      el.tokenMailMessage.textContent = t('mailHint');
+      el.tokenMailState.textContent = el.tokenMailRefresh.dataset.raw ? t('mailCodeReady') : '';
+      el.tokenMailMessage.textContent = el.tokenMailRefresh.dataset.raw ? t('mailRead') : t('mailHint');
     }
+  }
+
+  function displayVerifierLabel(label) {
+    const value = String(label || '').trim();
+    if (!value) return '';
+    const match = value.match(/^([^@\s]+)@([^@\s]+\.[^@\s]+)$/);
+    if (!match) return value;
+    const [, name, domain] = match;
+    const prefix = name.slice(0, Math.min(3, name.length));
+    return `${prefix}***@${domain}`;
   }
 
   function apiBase() {
@@ -463,6 +482,13 @@
     return code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
   }
 
+  function setVerifierCodeButton(button, codeNode, rawCode, placeholder) {
+    const raw = rawCode || '';
+    button.dataset.raw = raw;
+    button.classList.toggle('has-code', Boolean(raw));
+    codeNode.textContent = raw ? formatTokenCode(raw) : placeholder;
+  }
+
   async function refreshVerifierTotp(force) {
     if (!verifierSecret) return;
     const counter = Math.floor(Date.now() / 1000 / 30);
@@ -478,10 +504,12 @@
       });
       el.tokenTotpCode.textContent = formatTokenCode(code);
       el.tokenTotpCopy.dataset.raw = code;
+      el.tokenTotpCopy.classList.add('has-code');
       el.tokenTotpMessage.textContent = t('generatedLocal');
     } catch (_) {
       el.tokenTotpCode.textContent = '------';
       el.tokenTotpCopy.dataset.raw = '';
+      el.tokenTotpCopy.classList.remove('has-code');
       el.tokenTotpMessage.textContent = t('invalidTotpSecret');
     }
   }
@@ -512,7 +540,8 @@
     verifierProduct = product;
     verifierSecret = product.googleAuth || '';
     verifierExpiresAt = data.expiresAt || '';
-    el.tokenTitle.textContent = product.label ? t('tokenTitleWithLabel', product.label) : t('customerPage');
+    const label = displayVerifierLabel(product.label);
+    el.tokenTitle.textContent = label ? t('tokenTitleWithLabel', label) : t('customerPage');
     el.tokenMeta.textContent = t('tokenMeta');
     el.tokenPanel.hidden = false;
     setTokenStatus('', false);
@@ -521,30 +550,29 @@
       refreshVerifierTotp(true);
     } else {
       el.tokenTotpCode.textContent = '------';
+      el.tokenTotpCopy.classList.remove('has-code');
       el.tokenTotpCountdown.textContent = t('notConfigured');
       el.tokenTotpMessage.textContent = t('totpMissing');
     }
 
     if (product.capabilities?.sms) {
-      el.tokenSmsPhone.textContent = product.phone || t('configuredPhone');
-      el.tokenSmsCode.textContent = t('viewSms');
       el.tokenSmsOpen.disabled = false;
-      el.tokenSmsOpen.dataset.raw = '';
+      setVerifierCodeButton(el.tokenSmsOpen, el.tokenSmsCode, '', t('viewSms'));
+      el.tokenSmsState.textContent = '';
       el.tokenSmsMessage.textContent = t('smsHint');
     } else {
-      el.tokenSmsPhone.textContent = product.phone || t('noPhone');
-      el.tokenSmsCode.textContent = t('notConfigured');
       el.tokenSmsOpen.disabled = true;
-      el.tokenSmsOpen.dataset.raw = '';
+      setVerifierCodeButton(el.tokenSmsOpen, el.tokenSmsCode, '', t('notConfigured'));
+      el.tokenSmsState.textContent = '';
       el.tokenSmsMessage.textContent = product.smsRaw
         ? t('smsRawInvalid')
         : t('smsMissing');
     }
 
     const recoveryEmail = product.recoveryEmail || product.hotmailEmail || product.mailEmail || product.email || '';
-    el.tokenMailEmail.textContent = recoveryEmail || t('noMail');
-    el.tokenMailCode.textContent = t('readMail');
-    el.tokenMailRefresh.dataset.raw = '';
+    el.tokenMailRefresh.disabled = !recoveryEmail;
+    setVerifierCodeButton(el.tokenMailRefresh, el.tokenMailCode, '', recoveryEmail ? t('readMail') : t('notConfigured'));
+    el.tokenMailState.textContent = '';
     el.tokenMailMessage.textContent = recoveryEmail ? t('mailHint') : t('mailMissing');
   }
 
@@ -561,12 +589,12 @@
       const response = await fetch(`${apiBase()}/api/verifier-sms-code?token=${encodeURIComponent(verifierToken)}`);
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.message || t('smsFailed'));
-      el.tokenSmsCode.textContent = data.code ? formatTokenCode(data.code) : t('smsNotFound');
-      el.tokenSmsOpen.dataset.raw = data.code || '';
+      setVerifierCodeButton(el.tokenSmsOpen, el.tokenSmsCode, data.code || '', t('smsNotFound'));
+      el.tokenSmsState.textContent = data.code ? t('smsCodeReady') : '';
       el.tokenSmsMessage.textContent = data.message || t('smsRead');
     } catch (error) {
-      el.tokenSmsCode.textContent = t('smsNotFound');
-      el.tokenSmsOpen.dataset.raw = '';
+      setVerifierCodeButton(el.tokenSmsOpen, el.tokenSmsCode, '', t('smsNotFound'));
+      el.tokenSmsState.textContent = '';
       el.tokenSmsMessage.textContent = error.message || t('smsFailed');
     }
   }
@@ -588,20 +616,24 @@
   }
 
   async function refreshMailCode() {
-    if (!verifierToken) return;
+    if (!verifierToken || el.tokenMailRefresh.disabled) return;
+    const cached = el.tokenMailRefresh.dataset.raw || '';
+    if (cached && el.tokenMailCode.textContent !== t('readMailLoading')) {
+      copyToClipboard(cached);
+      return;
+    }
     el.tokenMailCode.textContent = t('readMailLoading');
     el.tokenMailMessage.textContent = t('mailReading');
     try {
       const response = await fetch(`${apiBase()}/api/verifier-mail-code?token=${encodeURIComponent(verifierToken)}`);
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.message || t('mailFailed'));
-      el.tokenMailCode.textContent = data.code || t('smsNotFound');
-      el.tokenMailRefresh.dataset.raw = data.code || '';
+      setVerifierCodeButton(el.tokenMailRefresh, el.tokenMailCode, data.code || '', t('smsNotFound'));
+      el.tokenMailState.textContent = data.code ? t('mailCodeReady') : '';
       el.tokenMailMessage.textContent = data.message || t('mailRead');
-      if (data.code) copyToClipboard(data.code);
     } catch (error) {
-      el.tokenMailCode.textContent = t('notConfigured');
-      el.tokenMailRefresh.dataset.raw = '';
+      setVerifierCodeButton(el.tokenMailRefresh, el.tokenMailCode, '', t('smsNotFound'));
+      el.tokenMailState.textContent = '';
       el.tokenMailMessage.textContent = error.message || t('mailFailed');
     }
   }

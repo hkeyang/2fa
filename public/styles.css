@@ -372,11 +372,30 @@ body.token-mode .eyebrow {
   display: grid;
   place-items: center;
   padding: var(--space-4);
+  transition: border-color var(--transition), background var(--transition),
+    box-shadow var(--transition), transform var(--transition);
 }
 
 body.token-mode .totp-display {
   min-height: clamp(76px, 10vh, 112px);
   padding: var(--space-4);
+}
+
+.totp-display:hover:not(:disabled),
+.totp-display.has-code {
+  border-color: rgba(59, 111, 212, 0.28);
+  background: #f1f4fb;
+}
+
+.totp-display:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(20, 25, 45, 0.06);
+}
+
+.totp-display:disabled {
+  cursor: not-allowed;
+  color: var(--text-faint);
+  opacity: 0.68;
 }
 
 .totp-display span {
@@ -391,12 +410,19 @@ body.token-mode .totp-display span {
   font-size: 32px;
 }
 
+.sms-code span,
 .mail-code span {
-  font-size: 24px;
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
-body.token-mode .mail-code span {
-  font-size: 22px;
+.sms-code.has-code span,
+.mail-code.has-code span {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-variant-numeric: tabular-nums;
 }
 
 .verify-card__foot {
@@ -416,15 +442,6 @@ body.token-mode .mail-code span {
 body.token-mode .verify-message {
   min-height: 18px;
   font-size: 12px;
-}
-
-.mail-address {
-  min-height: 26px;
-  color: var(--text-muted);
-  font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .verify-card--sms {
