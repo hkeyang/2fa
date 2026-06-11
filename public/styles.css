@@ -903,17 +903,14 @@ body.token-mode {
   color: var(--token-text);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC',
     'Microsoft YaHei', sans-serif;
-  background:
-    radial-gradient(circle at 8% 0%, rgba(220, 251, 248, 0.9), transparent 28%),
-    radial-gradient(circle at 88% 9%, rgba(225, 229, 255, 0.92), transparent 12%),
-    linear-gradient(135deg, #fbffff 0%, #f8fbff 42%, #f2f5ff 100%);
+  background: linear-gradient(135deg, #fbffff 0%, #f8fbff 46%, #f4f7ff 100%);
 }
 
 body.token-mode .bg-decor {
   background:
-    radial-gradient(circle at 1% 1%, rgba(211, 251, 247, 0.85), transparent 27%),
-    radial-gradient(circle at 80% 75%, rgba(205, 232, 255, 0.82), transparent 24%),
-    radial-gradient(circle at 88% 12%, rgba(220, 224, 255, 0.9), transparent 13%),
+    radial-gradient(circle at 0% 0%, rgba(211, 251, 247, 0.58), transparent 24%),
+    radial-gradient(circle at 84% 83%, rgba(205, 232, 255, 0.42), transparent 22%),
+    radial-gradient(circle at 90% 12%, rgba(220, 224, 255, 0.48), transparent 12%),
     linear-gradient(137deg, #fbffff 0%, #f8fbff 48%, #f4f6ff 100%);
 }
 
@@ -927,12 +924,12 @@ body.token-mode .bg-decor::after {
 body.token-mode .bg-decor::before {
   right: -8.5vw;
   bottom: -24vh;
-  width: 45vw;
-  height: 83vh;
+  width: 38vw;
+  height: 72vh;
   border-radius: 48% 0 0 48%;
   background:
-    linear-gradient(112deg, rgba(166, 208, 255, 0.02), rgba(149, 163, 252, 0.26)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(173, 185, 249, 0.24));
+    linear-gradient(112deg, rgba(166, 208, 255, 0.02), rgba(149, 163, 252, 0.14)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(173, 185, 249, 0.12));
   box-shadow:
     inset 28px 12px 42px rgba(255, 255, 255, 0.72),
     inset -20px -26px 46px rgba(153, 164, 237, 0.2);
@@ -943,10 +940,10 @@ body.token-mode .bg-decor::before {
 body.token-mode .bg-decor::after {
   left: 57vw;
   bottom: -11vh;
-  width: 20vw;
-  height: 45vh;
+  width: 16vw;
+  height: 36vh;
   border-radius: 50%;
-  background: linear-gradient(160deg, rgba(213, 236, 255, 0.86), rgba(199, 201, 253, 0.5));
+  background: linear-gradient(160deg, rgba(213, 236, 255, 0.5), rgba(199, 201, 253, 0.22));
   box-shadow:
     inset 18px 18px 34px rgba(255, 255, 255, 0.7),
     0 28px 68px rgba(110, 139, 216, 0.12);
@@ -958,62 +955,62 @@ body.token-mode .bg-grid {
 
 body.token-mode .app {
   width: 100%;
-  max-width: 1530px;
+  max-width: 1180px;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 0 clamp(18px, 2.6vw, 32px) clamp(28px, 4vh, 48px);
+  padding: 0 clamp(16px, 2.4vw, 28px) clamp(32px, 5vh, 54px);
   box-sizing: border-box;
 }
 
 body.token-mode .topbar {
-  padding: clamp(20px, 3vh, 30px) 0 clamp(22px, 3.6vh, 36px);
+  padding: clamp(14px, 2.2vh, 22px) 0 clamp(18px, 3vh, 28px);
 }
 
 body.token-mode .brand {
-  gap: 14px;
+  gap: 12px;
 }
 
 body.token-mode .brand__logo {
-  width: 62px;
-  height: 62px;
-  border-radius: 21px;
-  background: rgba(255, 255, 255, 0.66);
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(213, 220, 239, 0.82);
   box-shadow:
-    0 14px 34px rgba(66, 98, 164, 0.08),
+    0 10px 26px rgba(66, 98, 164, 0.07),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.token-mode .brand__logo svg {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   stroke-width: 2.8;
 }
 
 body.token-mode .brand__name {
   color: #10152d;
-  font-size: 29px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: 0;
   line-height: 1.06;
 }
 
 body.token-mode .brand__tag {
-  margin-top: 5px;
+  margin-top: 3px;
   color: #6e7899;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
 }
 
 body.token-mode .lang-toggle {
-  width: 62px;
-  height: 53px;
-  border-radius: 16px;
+  width: 54px;
+  height: 44px;
+  border-radius: 13px;
   border-color: rgba(203, 210, 232, 0.92);
   background: rgba(248, 250, 255, 0.6);
   color: #303b5e;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
@@ -1025,39 +1022,51 @@ body.token-mode .layout {
 
 body.token-mode .token-panel {
   display: grid;
-  grid-template-rows: auto auto;
-  gap: clamp(20px, 4vh, 44px);
+  grid-template-rows: unset;
+  grid-auto-rows: max-content;
+  align-items: start;
+  align-content: start;
+  height: auto;
+  gap: clamp(16px, 2.6vh, 26px);
 }
 
 body.token-mode .token-status {
   min-height: 0;
   padding: 0;
   border: 0;
+  background: transparent;
+}
+
+body.token-mode .token-status.is-visible {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(234, 187, 182, 0.8);
+  border-radius: 12px;
+  background: rgba(252, 238, 238, 0.78);
 }
 
 body.token-mode .token-hero,
 body.token-mode .verify-card {
   border: 1px solid rgba(215, 222, 241, 0.92);
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.8);
   box-shadow:
-    0 19px 52px rgba(73, 89, 135, 0.09),
+    0 12px 34px rgba(73, 89, 135, 0.07),
     inset 0 1px 0 rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 body.token-mode .token-hero {
   min-height: 0;
   align-items: center;
-  border-radius: 28px;
-  padding: clamp(24px, 3.4vw, 34px) clamp(24px, 4vw, 53px) clamp(24px, 3.5vw, 36px)
-    clamp(24px, 3vw, 35px);
+  border-radius: 20px;
+  padding: clamp(18px, 2.2vw, 24px) clamp(20px, 3vw, 30px);
 }
 
 body.token-mode .token-hero__copy {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -1065,20 +1074,20 @@ body.token-mode .token-icon {
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  border-radius: 24px;
+  border-radius: 16px;
 }
 
 body.token-mode .token-icon--hero {
-  width: 68px;
-  height: 68px;
+  width: 48px;
+  height: 48px;
   color: #5d8df4;
   background: linear-gradient(145deg, #edf4ff, #e8eefc);
 }
 
 body.token-mode .eyebrow {
-  margin-bottom: 13px;
+  margin-bottom: 8px;
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.155em;
@@ -1087,7 +1096,7 @@ body.token-mode .eyebrow {
 
 body.token-mode .token-hero .panel__title {
   color: var(--token-text);
-  font-size: clamp(24px, 2.2vw, 30px);
+  font-size: clamp(21px, 2vw, 26px);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: 0;
@@ -1095,24 +1104,24 @@ body.token-mode .token-hero .panel__title {
 }
 
 body.token-mode .token-hero .panel__subtitle {
-  margin-top: clamp(14px, 2.4vh, 26px);
+  margin-top: 10px;
   color: #657092;
-  font-size: clamp(15px, 1.4vw, 18px);
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.45;
 }
 
 body.token-mode .token-expire {
-  min-width: 250px;
-  height: 49px;
+  min-width: 0;
+  height: 40px;
   justify-content: center;
-  gap: 12px;
+  gap: 9px;
   border: 1px solid rgba(218, 221, 240, 0.95);
-  border-radius: 13px;
+  border-radius: 11px;
   background: rgba(244, 245, 255, 0.82);
   color: #4c5a80;
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 800;
   box-shadow:
     0 8px 18px rgba(58, 68, 120, 0.05),
@@ -1121,9 +1130,9 @@ body.token-mode .token-expire {
 
 body.token-mode .token-expire::before {
   content: '';
-  width: 20px;
-  height: 20px;
-  border: 3px solid #50618d;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #50618d;
   border-radius: 50%;
   background:
     linear-gradient(#50618d, #50618d) 50% 27% / 2px 6px no-repeat,
@@ -1132,24 +1141,23 @@ body.token-mode .token-expire::before {
 
 body.token-mode .verify-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px;
+  gap: 18px;
   height: auto;
   min-height: 0;
 }
 
 body.token-mode .verify-card {
-  min-height: clamp(320px, 42vh, 390px);
+  min-height: 260px;
   height: auto;
-  border-radius: 26px;
-  padding: clamp(24px, 2.4vw, 32px) clamp(24px, 2.8vw, 35px)
-    clamp(24px, 2.5vw, 33px);
+  border-radius: 20px;
+  padding: clamp(20px, 2.1vw, 26px);
   gap: 0;
 }
 
 body.token-mode .verify-card__head {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 body.token-mode .verify-card__head > div {
@@ -1160,7 +1168,7 @@ body.token-mode .verify-card__head > div {
 
 body.token-mode .verify-card__head strong {
   color: #10152d;
-  font-size: clamp(20px, 1.8vw, 24px);
+  font-size: clamp(17px, 1.5vw, 20px);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0;
@@ -1171,9 +1179,9 @@ body.token-mode .token-icon--google,
 body.token-mode .token-icon--sms,
 body.token-mode .token-icon--mail,
 body.token-mode .token-icon--backup {
-  width: 68px;
-  height: 68px;
-  font-size: 36px;
+  width: 48px;
+  height: 48px;
+  font-size: 28px;
   font-weight: 800;
 }
 
@@ -1207,8 +1215,8 @@ body.token-mode .verify-card:nth-child(3) .eyebrow {
 
 body.token-mode .backup-card {
   min-height: 0;
-  padding: clamp(20px, 2.3vw, 28px) clamp(22px, 3vw, 34px);
-  gap: clamp(16px, 2vh, 22px);
+  padding: clamp(18px, 2vw, 24px);
+  gap: clamp(14px, 1.8vh, 20px);
 }
 
 body.token-mode .backup-card[hidden] {
@@ -1235,27 +1243,27 @@ body.token-mode .backup-actions {
 }
 
 body.token-mode .backup-count {
-  min-height: 38px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   border: 1px solid rgba(224, 209, 181, 0.88);
-  border-radius: 12px;
-  padding: 0 14px;
+  border-radius: 10px;
+  padding: 0 12px;
   background: rgba(255, 248, 234, 0.68);
   color: #805018;
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
 }
 
 body.token-mode .backup-action {
-  min-height: 38px;
+  min-height: 34px;
   border: 1px solid rgba(210, 216, 232, 0.94);
-  border-radius: 12px;
-  padding: 0 15px;
+  border-radius: 10px;
+  padding: 0 13px;
   background: rgba(248, 250, 255, 0.78);
   color: #4c5a80;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
 }
@@ -1279,8 +1287,8 @@ body.token-mode .backup-action--primary {
 
 body.token-mode .backup-list {
   display: grid;
-  grid-template-columns: repeat(5, minmax(120px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, minmax(118px, 1fr));
+  gap: 8px;
 }
 
 body.token-mode .backup-list[hidden] {
@@ -1289,14 +1297,14 @@ body.token-mode .backup-list[hidden] {
 
 body.token-mode .backup-code-row {
   min-width: 0;
-  min-height: 52px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   border: 1px solid rgba(226, 214, 194, 0.94);
-  border-radius: 14px;
-  padding: 0 14px;
+  border-radius: 12px;
+  padding: 0 12px;
   background: rgba(255, 252, 246, 0.76);
   color: #1f263c;
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
@@ -1312,7 +1320,7 @@ body.token-mode .backup-code-row__digits {
   min-width: 0;
   overflow-wrap: anywhere;
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: clamp(18px, 1.7vw, 23px);
+  font-size: clamp(16px, 1.45vw, 19px);
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
@@ -1321,14 +1329,14 @@ body.token-mode .backup-code-row__digits {
 body.token-mode .backup-code-row__copy {
   flex: 0 0 auto;
   color: #9b6a22;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
 body.token-mode .totp-display {
-  min-height: clamp(96px, 12vh, 115px);
-  margin-top: clamp(26px, 4vh, 38px);
-  border-radius: 18px;
+  min-height: 78px;
+  margin-top: clamp(18px, 2.8vh, 24px);
+  border-radius: 14px;
   background: rgba(248, 251, 255, 0.62);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
@@ -1354,13 +1362,13 @@ body.token-mode .totp-display:hover:not(:disabled),
 body.token-mode .totp-display.has-code {
   background: rgba(255, 255, 255, 0.76);
   box-shadow:
-    0 13px 26px rgba(54, 75, 129, 0.08),
+    0 10px 22px rgba(54, 75, 129, 0.07),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.token-mode .totp-display span {
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: clamp(34px, 4vw, 48px);
+  font-size: clamp(31px, 3.5vw, 42px);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.07em;
@@ -1369,7 +1377,7 @@ body.token-mode .totp-display span {
 body.token-mode .sms-code span,
 body.token-mode .mail-code span {
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: clamp(26px, 3vw, 34px);
+  font-size: clamp(20px, 2.1vw, 25px);
   font-weight: 900;
   letter-spacing: 0;
 }
@@ -1377,17 +1385,17 @@ body.token-mode .mail-code span {
 body.token-mode .sms-code.has-code span,
 body.token-mode .mail-code.has-code span {
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  font-size: clamp(34px, 3.8vw, 46px);
+  font-size: clamp(31px, 3.2vw, 40px);
   letter-spacing: 0.07em;
 }
 
 body.token-mode .verify-card__foot {
-  min-height: clamp(48px, 7vh, 61px);
-  margin-top: clamp(22px, 3vh, 29px);
+  min-height: 34px;
+  margin-top: clamp(16px, 2.3vh, 22px);
   padding-top: 0;
   color: var(--token-blue);
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: clamp(15px, 1.4vw, 17px);
+  font-size: 14px;
   font-weight: 700;
   line-height: 1;
 }
@@ -1396,7 +1404,7 @@ body.token-mode .verify-card__foot::after {
   content: '';
   display: block;
   height: 1px;
-  margin-top: clamp(22px, 3vh, 31px);
+  margin-top: clamp(16px, 2.3vh, 22px);
   background: var(--token-line);
 }
 
@@ -1407,9 +1415,9 @@ body.token-mode .verify-card:nth-child(3) .verify-card__foot {
 
 body.token-mode .verify-message {
   min-height: 0;
-  margin-top: clamp(16px, 2.4vh, 24px);
+  margin-top: 14px;
   color: #66718f;
-  font-size: clamp(15px, 1.4vw, 17px);
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.45;
 }
@@ -1418,7 +1426,7 @@ body.token-mode .verify-message {
 @media (max-width: 1180px) {
   body.token-mode .verify-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+    gap: 16px;
   }
 
   body.token-mode .verify-card {
@@ -1430,7 +1438,7 @@ body.token-mode .verify-message {
   }
 
   body.token-mode .backup-list {
-    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    grid-template-columns: repeat(3, minmax(118px, 1fr));
   }
 }
 
@@ -1438,7 +1446,7 @@ body.token-mode .verify-message {
   body.token-mode .token-hero {
     align-items: stretch;
     flex-direction: column;
-    gap: 22px;
+    gap: 16px;
   }
 
   body.token-mode .token-expire {
@@ -1465,7 +1473,7 @@ body.token-mode .verify-message {
   }
 
   body.token-mode .backup-list {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, minmax(118px, 1fr));
   }
 }
 
@@ -1514,39 +1522,39 @@ body.token-mode .verify-message {
   }
   body.token-mode .app {
     max-width: none;
-    padding: 0 18px 28px;
+    padding: 0 16px 28px;
   }
   body.token-mode .topbar {
-    padding: 22px 0 24px;
+    padding: 16px 0 18px;
   }
   body.token-mode .brand__logo {
-    width: 52px;
-    height: 52px;
-    border-radius: 18px;
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
   }
   body.token-mode .brand__name {
-    font-size: 23px;
+    font-size: 22px;
   }
   body.token-mode .brand__tag {
     font-size: 14px;
   }
   body.token-mode .lang-toggle {
-    width: 54px;
-    height: 46px;
+    width: 50px;
+    height: 42px;
     font-size: 15px;
   }
   body.token-mode .token-panel {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 16px;
   }
   body.token-mode .token-hero {
     min-height: 0;
     flex-direction: column;
     align-items: stretch;
-    gap: 22px;
-    padding: 24px;
-    border-radius: 24px;
+    gap: 16px;
+    padding: 18px;
+    border-radius: 18px;
   }
   body.token-mode .token-hero__copy {
     gap: 16px;
@@ -1556,41 +1564,41 @@ body.token-mode .verify-message {
   body.token-mode .token-icon--sms,
   body.token-mode .token-icon--mail,
   body.token-mode .token-icon--backup {
-    width: 58px;
-    height: 58px;
-    border-radius: 20px;
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
   }
   body.token-mode .token-hero .panel__title {
-    font-size: 25px;
+    font-size: 22px;
   }
   body.token-mode .token-hero .panel__subtitle,
   body.token-mode .verify-message {
-    font-size: 15px;
+    font-size: 14px;
   }
   body.token-mode .token-expire {
     min-width: 0;
     width: max-content;
     max-width: 100%;
-    height: 44px;
+    height: 38px;
     font-size: 14px;
   }
   body.token-mode .verify-grid {
     grid-template-columns: 1fr;
     height: auto;
-    gap: 18px;
+    gap: 14px;
   }
   body.token-mode .verify-card {
     min-height: 0;
     height: auto;
-    padding: 24px;
-    border-radius: 24px;
+    padding: 18px;
+    border-radius: 18px;
   }
   body.token-mode .backup-card {
-    padding: 22px;
+    padding: 18px;
   }
   body.token-mode .totp-display {
-    min-height: 100px;
-    margin-top: 28px;
+    min-height: 74px;
+    margin-top: 18px;
   }
 }
 
