@@ -216,6 +216,31 @@
             <p id="tokenMailMessage" class="verify-message" data-i18n="mailHint">点击读取最新恢复邮件验证码。</p>
           </article>
         </div>
+
+        <article id="tokenBackupCard" class="verify-card backup-card" hidden>
+          <div class="backup-card__head">
+            <div class="verify-card__head">
+              <span class="token-icon token-icon--backup" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                  <path d="M12 14v2"></path>
+                </svg>
+              </span>
+              <div>
+                <span class="eyebrow">BACKUP CODES</span>
+                <strong data-i18n="backupTitle">备份码</strong>
+              </div>
+            </div>
+            <div class="backup-actions">
+              <span id="tokenBackupCount" class="backup-count"></span>
+              <button id="tokenBackupToggle" class="backup-action" type="button" data-i18n="backupShow">显示</button>
+              <button id="tokenBackupCopyAll" class="backup-action backup-action--primary" type="button" data-i18n="backupCopyAll">复制全部</button>
+            </div>
+          </div>
+          <div id="tokenBackupList" class="backup-list" hidden></div>
+          <p id="tokenBackupMessage" class="verify-message" data-i18n="backupHint">默认隐藏；展开后可复制全部或任意一行。</p>
+        </article>
       </section>
     </main>
   </div>

@@ -72,6 +72,14 @@
       mailRead: '已读取最新恢复邮件。',
       mailCodeReady: '点击验证码可复制。',
       mailFailed: '恢复邮箱验证码读取失败',
+      backupTitle: '备份码',
+      backupShow: '显示',
+      backupHide: '收起',
+      backupCopyAll: '复制全部',
+      backupCount: (count) => `${count} 条`,
+      backupHint: '默认隐藏；展开后可复制全部或任意一行。',
+      backupShown: '点击任意一行可复制单条备份码。',
+      backupMissing: '该产品没有配置备份码。',
       expired: '已过期',
       validDays: (days) => `有效 ${days} 天`,
       validDaysHours: (days, hours) => `有效 ${days} 天 ${hours} 小时`,
@@ -142,6 +150,14 @@
       mailRead: 'Latest recovery email read.',
       mailCodeReady: 'Click the code to copy.',
       mailFailed: 'Failed to read recovery email code',
+      backupTitle: 'Backup Codes',
+      backupShow: 'Show',
+      backupHide: 'Hide',
+      backupCopyAll: 'Copy All',
+      backupCount: (count) => `${count} ${count === 1 ? 'code' : 'codes'}`,
+      backupHint: 'Hidden by default. Expand to copy all or one line.',
+      backupShown: 'Click any row to copy that backup code.',
+      backupMissing: 'This product has no backup codes configured.',
       expired: 'Expired',
       validDays: (days) => `Valid ${days} ${days === 1 ? 'day' : 'days'}`,
       validDaysHours: (days, hours) =>
@@ -193,6 +209,12 @@
     tokenMailRefresh: document.getElementById('tokenMailRefresh'),
     tokenMailState: document.getElementById('tokenMailState'),
     tokenMailMessage: document.getElementById('tokenMailMessage'),
+    tokenBackupCard: document.getElementById('tokenBackupCard'),
+    tokenBackupCount: document.getElementById('tokenBackupCount'),
+    tokenBackupToggle: document.getElementById('tokenBackupToggle'),
+    tokenBackupCopyAll: document.getElementById('tokenBackupCopyAll'),
+    tokenBackupList: document.getElementById('tokenBackupList'),
+    tokenBackupMessage: document.getElementById('tokenBackupMessage'),
   };
 
   // 进度环周长（r=16）
@@ -205,6 +227,7 @@
   let verifierExpiresAt = '';
   let verifierLastCounter = -1;
   let verifierProduct = null;
+  let verifierBackupCodes = [];
   let currentLanguage = DEFAULT_LANGUAGE;
 
   function t(key, ...args) {
@@ -232,6 +255,7 @@
 
     if (verifierToken) {
       renderVerifierStaticText();
+      renderBackupCodes();
       tickVerifierMode();
     }
   }
@@ -266,6 +290,7 @@
       el.tokenMailState.textContent = el.tokenMailRefresh.dataset.raw ? t('mailCodeReady') : '';
       el.tokenMailMessage.textContent = el.tokenMailRefresh.dataset.raw ? t('mailRead') : t('mailHint');
     }
+    renderBackupCodes();
   }
 
   function displayVerifierLabel(label) {
@@ -489,6 +514,54 @@
     codeNode.textContent = raw ? formatTokenCode(raw) : placeholder;
   }
 
+  function parseBackupCodes(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return [];
+    const multiline = raw.includes('\n') || raw.includes('\r');
+    const parts = raw
+      .split(multiline ? /\r?\n/ : /[\s,;，；]+/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (multiline) {
+      return parts.map((line) => {
+        const compact = line.replace(/\s+/g, '');
+        return /^\d{8}$/.test(compact) ? compact : line;
+      });
+    }
+    if (parts.length % 2 === 0 && parts.every((part) => /^\d{4}$/.test(part))) {
+      const grouped = [];
+      for (let idx = 0; idx < parts.length; idx += 2) {
+        grouped.push(`${parts[idx]}${parts[idx + 1]}`);
+      }
+      return grouped;
+    }
+    return parts;
+  }
+
+  function renderBackupCodes() {
+    const codes = verifierBackupCodes;
+    el.tokenBackupCard.hidden = codes.length === 0;
+    el.tokenBackupCount.textContent = codes.length ? t('backupCount', codes.length) : '';
+    el.tokenBackupToggle.textContent = el.tokenBackupList.hidden ? t('backupShow') : t('backupHide');
+    el.tokenBackupCopyAll.disabled = codes.length === 0;
+    el.tokenBackupMessage.textContent = el.tokenBackupList.hidden ? t('backupHint') : t('backupShown');
+    el.tokenBackupList.innerHTML = '';
+
+    codes.forEach((code) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'backup-code-row';
+      button.dataset.raw = code;
+      button.innerHTML = `
+        <span class="backup-code-row__digits"></span>
+        <span class="backup-code-row__copy">${t('copyTitle')}</span>
+      `;
+      button.querySelector('.backup-code-row__digits').textContent = code;
+      button.addEventListener('click', () => copyToClipboard(code));
+      el.tokenBackupList.appendChild(button);
+    });
+  }
+
   async function refreshVerifierTotp(force) {
     if (!verifierSecret) return;
     const counter = Math.floor(Date.now() / 1000 / 30);
@@ -539,6 +612,7 @@
     const product = data.product || {};
     verifierProduct = product;
     verifierSecret = product.googleAuth || '';
+    verifierBackupCodes = parseBackupCodes(product.securityCode || product.backupCodes || product.backupCode);
     verifierExpiresAt = data.expiresAt || '';
     const label = displayVerifierLabel(product.label);
     el.tokenTitle.textContent = label ? t('tokenTitleWithLabel', label) : t('customerPage');
@@ -574,6 +648,9 @@
     setVerifierCodeButton(el.tokenMailRefresh, el.tokenMailCode, '', recoveryEmail ? t('readMail') : t('notConfigured'));
     el.tokenMailState.textContent = '';
     el.tokenMailMessage.textContent = recoveryEmail ? t('mailHint') : t('mailMissing');
+
+    el.tokenBackupList.hidden = true;
+    renderBackupCodes();
   }
 
   async function refreshSmsCode() {
@@ -764,6 +841,15 @@
     });
     el.tokenMailRefresh.addEventListener('click', refreshMailCode);
     el.tokenSmsOpen.addEventListener('click', refreshSmsCode);
+    el.tokenBackupToggle.addEventListener('click', () => {
+      if (!verifierBackupCodes.length) return;
+      el.tokenBackupList.hidden = !el.tokenBackupList.hidden;
+      renderBackupCodes();
+    });
+    el.tokenBackupCopyAll.addEventListener('click', () => {
+      if (!verifierBackupCodes.length) return;
+      copyToClipboard(verifierBackupCodes.join('\n'));
+    });
   }
 
   /* ---------- 启动 ---------- */
